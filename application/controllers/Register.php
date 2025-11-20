@@ -62,10 +62,14 @@ class Register extends CI_Controller
         $this->load->view('users', $data);
     }
 
+public function logout()
+{
+    // destroy session
+    $this->session->sess_destroy();
 
-    
-
-
+    // redirect to login or register page
+    return redirect('register');  // or 'login'
+}
 
 
 }

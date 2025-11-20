@@ -1,4 +1,9 @@
-<?php $this->load->view('header'); ?>
+<?php
+// set the body class BEFORE loading header so header prints the correct <body>
+$body_class = "login-page";
+$data = ['title' => 'Login | AdminLTE', 'body_class' => $body_class];
+$this->load->view('header', $data);
+?>
 
 <div class="login-logo">
     <a href="#"><b>Admin</b>LTE</a>

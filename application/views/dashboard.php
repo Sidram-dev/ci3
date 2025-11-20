@@ -1,43 +1,101 @@
-<?php 
-$data['title'] = "My Profile | AdminLTE";
-$this->load->view('header', $data); 
+
+  <!--begin::Head-->
+<?php
+// set the body class BEFORE loading header so header prints the correct <body>
+
+$data = ['title' => 'Login | AdminLTE'];
+$this->load->view('header', $data);
 ?>
+  <!--end::Head-->
+  <!--begin::Body-->
+  <body class="layout-fixed fixed-header fixed-footer sidebar-expand-lg bg-body-tertiary">
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+      <!--begin::Header-->
+     <?php $this->load->view('navigation/headernav', $data);?>
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+    <?php $this->load->view('navigation/sidebar', $data);?>
+      <!--end::Sidebar-->
 
-<body class="hold-transition sidebar-mini sidebar-expand-lg">
-
-
-<div class="app-wrapper">
-
-    <!-- HEADER (contains messages, notifications, user dropdowns) -->
-    <?php $this->load->view('navigation/headernav'); ?>
-
-    <!-- SIDEBAR -->
-    <?php $this->load->view('navigation/sidebar'); ?>
-
-    <!-- MAIN CONTENT WRAPPER -->
-    <main class="app-main">
-
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
         <div class="app-content-header">
-            <div class="container-fluid">
-                <h3 class="mb-0">Dashboard</h3>
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <div class="col-sm-6">
+                <h3 class="mb-0">Fixed Complete</h3>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Fixed Complete</li>
+                </ol>
+              </div>
             </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
         </div>
-
-        <!-- PAGE CONTENT -->
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
         <div class="app-content">
-            <div class="container-fluid">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <div class="col-12">
+                <!-- Default box -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Title</h3>
 
-                <p>Welcome to your Dashboard!</p>
-
+                    <div class="card-tools">
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        data-lte-toggle="card-collapse"
+                        title="Collapse"
+                      >
+                        <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                        <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-tool"
+                        data-lte-toggle="card-remove"
+                        title="Remove"
+                      >
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">Start creating your amazing application!</div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">Footer</div>
+                  <!-- /.card-footer-->
+                </div>
+                <!-- /.card -->
+              </div>
             </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
         </div>
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+      <!--begin::Footer-->
+     <?php $this->load->view('navigation/footer', $data);?>
+      <!--end::Footer-->
+    </div>
+    <!--end::App Wrapper-->
+    <!--begin::Script-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
 
-    </main>
-
-</div>
-
-<!-- FOOTER -->
-<?php $this->load->view('navigation/footer'); ?>
-
-</body>
-</html>
+  </body>
+  <!--end::Body-->
+<?php $this->load->view('footer', $data);?>

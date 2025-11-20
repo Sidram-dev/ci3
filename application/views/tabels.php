@@ -2,23 +2,15 @@
 $data['title'] = "Simple Tables | AdminLTE";
 $this->load->view('header', $data); 
 ?>
-
-<body class="hold-transition sidebar-mini sidebar-expand-lg">
-
-
-<div class="app-wrapper">
-
-    <!-- HEADER -->
-    <?php 
-    $session_user = $this->session->userdata('user');
-    if (empty($session_user) || !is_object($session_user)) {
-        $session_user = (object)['full_name' => 'Guest User'];
-    }
-    $this->load->view('navigation/headernav', ['user' => $session_user]); 
-    ?>
-
-    <!-- SIDEBAR -->
-    <?php $this->load->view('navigation/sidebar'); ?>
+  <body class="layout-fixed fixed-header fixed-footer sidebar-expand-lg bg-body-tertiary">
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+      <!--begin::Header-->
+     <?php $this->load->view('navigation/headernav', $data);?>
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+    <?php $this->load->view('navigation/sidebar', $data);?>
+      <!--end::Sidebar-->
 
     <!-- MAIN CONTENT WRAPPER -->
     <main class="app-main">
@@ -33,7 +25,7 @@ $this->load->view('header', $data);
         <div class="app-content">
             <div class="container-fluid">
 
-                <h2 class="mb-3">Registered Users</h2>
+        
 
                 <div class="card">
                     <div class="card-body table-responsive p-0">
@@ -97,11 +89,13 @@ $this->load->view('header', $data);
         </div>
 
     </main>
-
+<?php $this->load->view('navigation/footer'); ?>
 </div>
 
 <!-- FOOTER -->
-<?php $this->load->view('navigation/footer'); ?>
+
 
 </body>
-</html>
+
+<?php $this->load->view('footer', $data);?>
+

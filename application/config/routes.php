@@ -59,4 +59,7 @@ $route['forgetpassward'] = 'forgetpassward';
 $route['header'] = 'header';
 $route['footer'] = 'footer';
 $route['tabels'] = 'tabels/index';
+$route['new_admin'] = 'new_admin';
+$route['profile'] = 'profile';
+
 
