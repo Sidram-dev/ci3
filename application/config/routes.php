@@ -54,4 +54,9 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 $route['login'] = 'login';
 $route['register'] = 'register';
+$route['dashboard'] = 'dashboard';
 $route['forgetpassward'] = 'forgetpassward';
+$route['header'] = 'header';
+$route['footer'] = 'footer';
+$route['tabels'] = 'tabels/index';
+

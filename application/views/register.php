@@ -1,4 +1,9 @@
-<?php $this->load->view('header'); ?> <!-- HEADER INCLUDE -->
+<?php
+$body_class = "register-page";  // IMPORTANT
+$data = ['title' => 'Register | AdminLTE', 'body_class' => $body_class];
+$this->load->view('header', $data);
+?>
+
 
 <div class="register-box">
     <div class="register-logo">
@@ -21,37 +26,38 @@
                 </div>
             <?php endif; ?>
 
-                <?= form_open('register/submit'); ?>
-                
-                <!-- CSRF CODE -->
-                 <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
-                value="<?= $this->security->get_csrf_hash(); ?>" />
+            <?= form_open('register/submit'); ?>
 
-                <div class="input-group mb-3">
-                <input type="email" name="email" class="form-control" placeholder="Email">
+            <!-- FULL NAME FIELD ADDED -->
+            <div class="input-group mb-3">
+                <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
+                <div class="input-group-text"><span class="bi bi-person-fill"></span></div>
+            </div>
 
-                    <div class="input-group-text"><span class="bi bi-envelope"></span></div>
-                </div>
+            <div class="input-group mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
+                <div class="input-group-text"><span class="bi bi-envelope"></span></div>
+            </div>
 
-                <div class="input-group mb-3">
-                    <input type="password" name="password" class="form-control" placeholder="Password">
-                    <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
-                </div>
+            <div class="input-group mb-3">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+                <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+            </div>
 
-                <div class="row">
-                    <div class="col-8">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="terms">
-                            <label class="form-check-label" for="terms">
-                                I agree to the <a href="#">terms</a>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+            <div class="row">
+                <div class="col-8">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="terms">
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="#">terms</a>
+                        </label>
                     </div>
                 </div>
+
+                <div class="col-4">
+                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                </div>
+            </div>
 
             </form>
 
