@@ -171,7 +171,7 @@
                    <img src="<?= base_url('assets/images/profile.jpg'); ?>"
                              class="rounded-circle shadow" alt="User Image">
                    <p>
-     <?= isset($user) && isset($user->full_name) ? $user->full_name : 'Guest User'; ?> - Web Developer
+    <?= isset($user) ? html_escape($user->full_name) : 'Guest User'; ?>- Web Developer
      <small>Member since Nov. 2023</small>
    </p>
                 </li>
@@ -195,7 +195,8 @@
                 <!--end::Menu Body-->
                 <!--begin::Menu Footer-->
                 <li class="user-footer">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                <a href="<?= site_url('New_admin/profile'); ?>" class="btn btn-default btn-flat">Profile</a>
+
                   <a href="<?= site_url('register/logout'); ?>" class="btn btn-default btn-flat float-end">Sign out</a>
 
                 </li>

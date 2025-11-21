@@ -21,41 +21,59 @@ class New_admin extends CI_Controller {
         $this->load->view('new_admin');
     }
 
-    // Profile page (logged-in user)
+
+    // Show profile of logged-in user
     public function profile() {
-        $id = $this->session->userdata('user_id');
-        if(!$id) redirect('register/login');
+        $user_id = $this->session->userdata('user_id');
 
-        $data['user'] = $this->User_model->getUserById($id);
+        if (!$user_id) {
+            redirect('login'); // Redirect if not logged in
+        }
+
+        $data['user'] = $this->User_model->getUserById($user_id);
+        $data['title'] = "My Profile | AdminLTE";
+
+ 
         $this->load->view('profile', $data);
+       
     }
 
-    // 👉 EDIT PAGE LOAD --- URL: /new_admin/edit/10
-  public function edit($id) {
-        $data['user'] = $this->User_model->getUserById($id);
-        $this->load->view('edit_user', $data);
+    // Update profile
+    public function update_profile() {
+        $user_id = $this->session->userdata('user_id');
+        if (!$user_id) redirect('login');
+
+        // Validate input
+        $this->form_validation->set_rules('first_name', 'First Name', 'required|trim');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim');
+        
+        if ($this->form_validation->run() == FALSE) {
+            $this->profile();
+            return;
+        }
+
+        $first_name = $this->input->post('first_name', TRUE);
+        $last_name  = $this->input->post('last_name', TRUE);
+           $status  = $this->input->post('status', TRUE);
+        $full_name  = $first_name . ' ' . $last_name;
+
+        $updated = $this->User_model->updateUser($user_id, $first_name, $last_name, $full_name,$status);
+
+        if ($updated) {
+            $this->session->set_flashdata('success', 'Profile updated successfully!');
+        } else {
+            $this->session->set_flashdata('error', 'Failed to update profile!');
+        }
+
+        redirect('New_admin/profile');
     }
 
-    // 👉 UPDATE USER --- URL: /new_admin/update/10
-    public function update($id)
-    {
-        $updateData = [
-            'full_name'  => $this->input->post('full_name'),
-            'first_name' => $this->input->post('first_name'),
-            'last_name'  => $this->input->post('last_name'),
-            'email' => $this->input->post('email'),
 
-            'status'     => $this->input->post('status'),
-        ];
 
-        $this->db->where('id', $id);
-        $this->db->update('users', $updateData);
 
-        $this->session->set_flashdata('success', 'User Updated Successfully!');
-        redirect('/new_admin/profile');
-    }
 
-    // Save new user
+
+   
     public function save() {
         $data = [
             'full_name'  => $this->input->post('full_name'),

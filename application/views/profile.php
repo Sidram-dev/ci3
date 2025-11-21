@@ -1,6 +1,7 @@
 <?php $this->load->view('header'); ?>
 
 <body class="layout-fixed fixed-header fixed-footer sidebar-expand-lg bg-body-tertiary">
+
 <div class="app-wrapper">
 
     <!-- HEADER NAV -->
@@ -9,12 +10,13 @@
     <!-- SIDEBAR -->
     <?php $this->load->view('navigation/sidebar'); ?>
 
+    <!-- MAIN CONTENT -->
     <main class="app-main">
 
-        <!-- PAGE HEADER -->
+        <!-- PAGE TITLE -->
         <div class="app-content-header">
             <div class="container-fluid">
-                <h3 class="mb-0">Edit User Profile</h3>
+                <h3 class="mb-0">My Profile</h3>
             </div>
         </div>
 
@@ -22,69 +24,95 @@
         <div class="app-content">
             <div class="container-fluid">
 
-                <!-- FORM OPEN -->
-                <?= form_open("new_admin/update/" . $user->id); ?>
+                <!-- FLASH MESSAGES -->
+                <?php if($this->session->flashdata('success')): ?>
+                    <div class="alert alert-success"><?= $this->session->flashdata('success'); ?></div>
+                <?php endif; ?>
+                <?php if($this->session->flashdata('error')): ?>
+                    <div class="alert alert-danger"><?= $this->session->flashdata('error'); ?></div>
+                <?php endif; ?>
 
-                <!-- CSRF -->
-                <input type="hidden"
-                       name="<?= $this->security->get_csrf_token_name(); ?>"
-                       value="<?= $this->security->get_csrf_hash(); ?>">
+                <!-- FORM VALIDATION ERRORS -->
+                <?php echo validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 
+                <!-- PROFILE CARD -->
                 <div class="card shadow-lg w-75 mx-auto mt-4">
 
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Edit User</h4>
+                        <h4 class="mb-0">Edit Profile</h4>
                     </div>
 
                     <div class="card-body">
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Full Name</label>
-                            <input type="text" name="full_name" class="form-control"
-                                   value="<?= $user->full_name ?>">
-                        </div>
+                        <form method="post" action="<?= site_url('New_admin/update_profile'); ?>">
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">First Name</label>
-                            <input type="text" name="first_name" class="form-control"
-                                   value="<?= $user->first_name ?>">
-                        </div>
+                            <!-- CSRF Token -->
+                            <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" 
+                                   value="<?= $this->security->get_csrf_hash(); ?>">
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Last Name</label>
-                            <input type="text" name="last_name" class="form-control"
-                                   value="<?= $user->last_name ?>">
-                        </div>
+                            <table class="table table-bordered table-striped mb-0">
 
-                    <div class="mb-3">
-    <label class="form-label fw-bold">Email (Cannot be edited)</label>
+                                <tr>
+                                    <th>ID</th>
+                                    <td><?= $user->id; ?></td>
+                                </tr>
 
-    <!-- Readonly visible input -->
-    <input type="email" class="form-control" value="<?= $user->email ?>" readonly>
+                                <tr>
+                                    <th>First Name</th>
+                                    <td>
+                                        <input type="text" name="first_name" class="form-control" 
+                                               value="<?= html_escape($user->first_name); ?>" required>
+                                    </td>
+                                </tr>
 
-    <!-- Hidden actual input (submitted to controller) -->
-    <input type="hidden" name="email" value="<?= $user->email ?>">
-</div>
+                                <tr>
+                                    <th>Last Name</th>
+                                    <td>
+                                        <input type="text" name="last_name" class="form-control" 
+                                               value="<?= html_escape($user->last_name); ?>" required>
+                                    </td>
+                                </tr>
 
+                                <tr>
+                                    <th>Full Name</th>
+                                    <td><?= html_escape($user->first_name . ' ' . $user->last_name); ?></td>
+                                </tr>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Status</label>
-                            <select name="status" class="form-control">
-                                <option value="1" <?= $user->status == 1 ? 'selected' : '' ?>>Active</option>
-                                <option value="0" <?= $user->status == 0 ? 'selected' : '' ?>>Inactive</option>
-                            </select>
-                        </div>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>
+                                        <input type="email" class="form-control" 
+                                               value="<?= html_escape($user->email); ?>" readonly>
+                                    </td>
+                                </tr>
 
-                    </div>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        <select name="status" class="form-select">
+                                            <option value="1" <?= $user->status == 1 ? 'selected' : ''; ?>>Active</option>
+                                            <option value="0" <?= $user->status == 0 ? 'selected' : ''; ?>>Inactive</option>
+                                        </select>
+                                    </td>
+                                </tr>
 
-                    <div class="card-footer text-end">
-                        <button type="submit" class="btn btn-success px-4">Save</button>
-                        <a href="<?= site_url('new_admin/profile'); ?>" class="btn btn-secondary px-4">Cancel</a>
+                                <tr>
+                                    <th>Created At</th>
+                                    <td><?= date('d-m-Y H:i', strtotime($user->created_at)); ?></td>
+                                </tr>
+
+                            </table>
+
+                            <div class="text-end mt-3">
+                                <a href="<?= site_url('tabels'); ?>" class="btn btn-secondary px-4">Back</a>
+                                <button type="submit" class="btn btn-primary px-4">Update Profile</button>
+                            </div>
+
+                        </form>
+
                     </div>
 
                 </div>
-
-                <?= form_close(); ?>
 
             </div>
         </div>
@@ -95,6 +123,6 @@
     <?php $this->load->view('navigation/footer'); ?>
 
 </div>
-</body>
 
+</body>
 <?php $this->load->view('footer'); ?>

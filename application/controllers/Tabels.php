@@ -62,8 +62,15 @@ $offset = ($page - 1) * $config['per_page'];
 $data['users'] = $this->User_model->getUsersLimit($config['per_page'], $offset);
 $data['pagination'] = $this->pagination->create_links();
 
+    // ✅ Add logged-in user info here
+    $user_id = $this->session->userdata('user_id');
+    $data['user'] = $this->User_model->getUserById($user_id);
+
 
     $this->load->view('tabels', $data);
+
+
+    
 }
 
 
