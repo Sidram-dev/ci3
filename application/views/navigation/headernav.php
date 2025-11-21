@@ -171,7 +171,8 @@
                    <img src="<?= base_url('assets/images/profile.jpg'); ?>"
                              class="rounded-circle shadow" alt="User Image">
                    <p>
-    <?= isset($user) ? html_escape($user->full_name) : 'Guest User'; ?>- Web Developer
+    <?= isset($logged_user) ? $logged_user->full_name : 'Guest User'; ?>
+- Web Developer
      <small>Member since Nov. 2023</small>
    </p>
                 </li>

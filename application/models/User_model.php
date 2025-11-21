@@ -66,13 +66,14 @@ class User_model extends CI_Model
         ];
     }
     // update
-public function updateUser($id, $first_name, $last_name, $full_name, $status)
+public function updateUser($id, $first_name, $last_name, $full_name, $status,$role)
 {
     $data = [
-        'first_name' => $first_name,
+           'first_name' => $first_name,
         'last_name'  => $last_name,
         'full_name'  => $full_name,
-        'status'     => $status
+        'status'     => $status,
+        'role'       => $role // <- update role
     ];
 
     return $this->db->where('id', $id)->update('users', $data);

@@ -56,8 +56,9 @@ class New_admin extends CI_Controller {
         $last_name  = $this->input->post('last_name', TRUE);
            $status  = $this->input->post('status', TRUE);
         $full_name  = $first_name . ' ' . $last_name;
+            $role     = $this->input->post('role', TRUE);  // 'Active' or 'Inactive'
 
-        $updated = $this->User_model->updateUser($user_id, $first_name, $last_name, $full_name,$status);
+        $updated = $this->User_model->updateUser($user_id, $first_name, $last_name, $full_name,$status,$role);
 
         if ($updated) {
             $this->session->set_flashdata('success', 'Profile updated successfully!');
@@ -68,12 +69,6 @@ class New_admin extends CI_Controller {
         redirect('New_admin/profile');
     }
 
-
-
-
-
-
-   
     public function save() {
         $data = [
             'full_name'  => $this->input->post('full_name'),
