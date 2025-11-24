@@ -61,5 +61,6 @@ $route['footer'] = 'footer';
 $route['tabels'] = 'tabels/index';
 $route['new_admin'] = 'new_admin';
 $route['profile'] = 'profile';
+$route['email_form'] = 'Email';
 
 
