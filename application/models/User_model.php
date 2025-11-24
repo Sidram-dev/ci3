@@ -93,4 +93,57 @@ public function getUsersLimit($limit, $offset)
 }
 
 
+
+
+
+
+
+
+
+
+
+    /* ------------------------------
+        GET USER BY EMAIL
+    ------------------------------ */
+    public function getUserByEmail($email)
+    {
+        return $this->db->where('email', $email)->get('users')->row();
+    }
+
+
+
+// Save reset token
+public function saveResetToken($email, $token)
+{
+    $expires = date("Y-m-d H:i:s", strtotime('+15 minutes'));
+
+    $data = [
+        'reset_token' => $token,
+        'reset_expires' => $expires
+    ];
+
+    return $this->db->where('email', $email)->update('users', $data);
+}
+
+// Check token validity
+public function checkToken($token)
+{
+    $this->db->where('reset_token', $token);
+    $this->db->where('reset_expires >=', date("Y-m-d H:i:s"));
+    return $this->db->get('users')->row();
+}
+
+// Update password after reset
+public function updatePasswordByEmail($email, $password)
+{
+    $data = [
+        'password' => password_hash($password, PASSWORD_DEFAULT),
+        'reset_token' => NULL,
+        'reset_expires' => NULL
+    ];
+
+    return $this->db->where('email', $email)->update('users', $data);
+}
+
+
 }

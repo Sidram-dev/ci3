@@ -1,40 +1,37 @@
-<?php
-// set the body class BEFORE loading header so header prints the correct <body>
-$body_class = "login-page";
-$data = ['title' => 'Login | AdminLTE', 'body_class' => $body_class];
-$this->load->view('header', $data);
-?>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Forgot Password</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-<div class="login-logo">
-    <a href="#"><b>Admin</b>LTE</a>
+<body class="bg-light">
+
+<div class="container mt-5" style="max-width: 400px">
+
+    <h3 class="text-center">Forgot Password</h3>
+
+    <?php if($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger"><?= $this->session->flashdata('error') ?></div>
+    <?php endif; ?>
+
+    <?php if($this->session->flashdata('success')): ?>
+        <div class="alert alert-success"><?= $this->session->flashdata('success') ?></div>
+    <?php endif; ?>
+
+
+    <?= form_open('forgetpassward/sendLink'); ?>
+
+       
+
+        <label>Email</label>
+        <input type="email" name="email" class="form-control mb-3" required>
+
+        <button class="btn btn-primary w-100">Send Reset Link</button>
+
+    <?= form_close(); ?>
+
 </div>
 
-<div class="card">
-    <div class="card-body login-card-body">
-
-        <p class="login-box-msg">
-            You forgot your password?<br>
-            Enter your email below to reset it.
-        </p>
-
-        <form action="<?= base_url('auth/sendResetLink') ?>" method="post">
-            <div class="input-group mb-3">
-                <input type="email" class="form-control" placeholder="Email" name="email" required>
-                <div class="input-group-text">
-                    <span class="bi bi-envelope"></span>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 mb-3">
-                Request New Password
-            </button>
-        </form>
-
-        <p class="mb-0 text-center">
-            <a href="<?= site_url('login') ?>">Back to login</a>
-        </p>
-
-    </div>
-</div>
-
-<?php $this->load->view('footer'); ?>
+</body>
+</html>

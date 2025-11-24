@@ -62,5 +62,6 @@ $route['tabels'] = 'tabels/index';
 $route['new_admin'] = 'new_admin';
 $route['profile'] = 'profile';
 $route['email_form'] = 'Email';
+$route['reset_passward'] = 'reset_passward';
 
 
