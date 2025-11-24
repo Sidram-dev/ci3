@@ -39,7 +39,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../assets/img/user1-128x128.jpg"
+                        src="<?= base_url('assets/images/bard.jpg'); ?>"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -65,7 +65,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../assets/img/user8-128x128.jpg"
+                        src="<?= base_url('assets/images/disel.jpg'); ?>"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />
@@ -91,7 +91,7 @@
                   <div class="d-flex">
                     <div class="flex-shrink-0">
                       <img
-                        src="../assets/img/user3-128x128.jpg"
+                        src="<?= base_url('assets/images/bard.jpg'); ?>"
                         alt="User Avatar"
                         class="img-size-50 rounded-circle me-3"
                       />

@@ -33,6 +33,7 @@
                     <div class="card-body">
 
                         <table class="table table-bordered table-striped mb-0">
+
                             <tr>
                                 <th>ID</th>
                                 <td><?= $user->id; ?></td>
@@ -57,6 +58,15 @@
                                 <th>Email</th>
                                 <td><?= $user->email; ?></td>
                             </tr>
+                            <!-- 🔥 ROLE ADDED -->
+                            <tr>
+                                <th>Role</th>
+                                <td>
+                                    <span class="badge bg-dark px-3">
+                                        <?= ucfirst($user->role ?? 'Customer'); ?>
+                                    </span>
+                                </td>
+                            </tr>
 
                             <tr>
                                 <th>Status</th>
@@ -73,6 +83,7 @@
                                 <th>Created At</th>
                                 <td><?= date('d-m-Y H:i', strtotime($user->created_at)); ?></td>
                             </tr>
+
                         </table>
 
                     </div>
@@ -96,3 +107,4 @@
 </body>
 
 <?php $this->load->view('footer'); ?>
+ 

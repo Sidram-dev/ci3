@@ -91,15 +91,9 @@ class Tabels extends CI_Controller
 
         $full_name = trim($first_name . ' ' . $last_name);
 
-        $updated = $this->User_model->updateUser(
-            $id,
-            $first_name,
-            $last_name,
-            $full_name,
-            $status,
-            $role
-        );
-
+        $updated = $this->User_model->updateUser( $id, $first_name,$last_name,$full_name,$status,$role);
+          
+       
         if ($updated) {
             $this->session->set_flashdata('success', 'User updated successfully!');
         } else {
@@ -143,4 +137,8 @@ class Tabels extends CI_Controller
 
         $this->load->view('details', $data);
     }
+
+
+
+
 }

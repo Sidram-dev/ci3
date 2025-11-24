@@ -39,35 +39,44 @@ class New_admin extends CI_Controller {
     }
 
     // Update profile
-    public function update_profile() {
-        $user_id = $this->session->userdata('user_id');
-        if (!$user_id) redirect('login');
+public function update_profile()
+{
+    $user_id = $this->session->userdata('user_id');
 
-        // Validate input
-        $this->form_validation->set_rules('first_name', 'First Name', 'required|trim');
-        $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim');
-        
-        if ($this->form_validation->run() == FALSE) {
-            $this->profile();
-            return;
-        }
+    $first_name = $this->input->post('first_name', TRUE);
+    $last_name  = $this->input->post('last_name', TRUE);
+    $role       = $this->input->post('role', TRUE);
+    $status     = $this->input->post('status', TRUE);
 
-        $first_name = $this->input->post('first_name', TRUE);
-        $last_name  = $this->input->post('last_name', TRUE);
-           $status  = $this->input->post('status', TRUE);
-        $full_name  = $first_name . ' ' . $last_name;
-            $role     = $this->input->post('role', TRUE);  // 'Active' or 'Inactive'
+    $data = [
+        'first_name' => $first_name,
+        'last_name'  => $last_name,
+        'role'       => $role,
+        'status'     => $status,
+    ];
 
-        $updated = $this->User_model->updateUser($user_id, $first_name, $last_name, $full_name,$status,$role);
+    // ---------- IMAGE UPLOAD ----------
+    if (!empty($_FILES['profile_image']['name'])) {
 
-        if ($updated) {
-            $this->session->set_flashdata('success', 'Profile updated successfully!');
-        } else {
-            $this->session->set_flashdata('error', 'Failed to update profile!');
-        }
+        // File content (BLOB)
+        $imageData = file_get_contents($_FILES['profile_image']['tmp_name']);
 
-        redirect('New_admin/profile');
+        $data['profile_image'] = $imageData;
     }
+
+    // Update in DB
+    $this->db->where('id', $user_id);
+    $updated = $this->db->update('users', $data);
+
+    if ($updated) {
+        $this->session->set_flashdata('success', 'Profile updated successfully');
+    } else {
+        $this->session->set_flashdata('error', 'Failed to update profile');
+    }
+
+    redirect('New_admin/profile');
+}
+
 
     public function save() {
         $data = [

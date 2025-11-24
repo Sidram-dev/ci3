@@ -488,6 +488,8 @@ $config['csrf_exclude_uris'] = array();
 |
 */
 $config['compress_output'] = FALSE;
+$config['upload_path'] = FCPATH . 'uploads/';
+
 
 /*
 |--------------------------------------------------------------------------
