@@ -21,9 +21,6 @@
 
 
     <?= form_open('forgetpassward/sendLink'); ?>
-
-       
-
         <label>Email</label>
         <input type="email" name="email" class="form-control mb-3" required>
 

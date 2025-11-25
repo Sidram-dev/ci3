@@ -95,13 +95,6 @@ public function getUsersLimit($limit, $offset)
 
 
 
-
-
-
-
-
-
-
     /* ------------------------------
         GET USER BY EMAIL
     ------------------------------ */

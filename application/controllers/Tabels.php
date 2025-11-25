@@ -13,6 +13,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Pagination $pagination
  * @property CI_Db $db
  * @property CI_Uri $uri
+ * @property CI_Output $output
  */
 class Tabels extends CI_Controller
 {
@@ -21,6 +22,8 @@ class Tabels extends CI_Controller
         parent::__construct();
         $this->load->model('User_model');
         $this->load->library('pagination');
+           // Enable CodeIgniter profiler
+    $this->output->enable_profiler(TRUE);
     }
 
     /**
