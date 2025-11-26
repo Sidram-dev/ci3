@@ -1,9 +1,8 @@
 <?php
-$body_class = "register-page";  // IMPORTANT
+$body_class = "register-page";
 $data = ['title' => 'Register | AdminLTE', 'body_class' => $body_class];
 $this->load->view('header', $data);
 ?>
-
 
 <div class="register-box">
     <div class="register-logo">
@@ -14,21 +13,11 @@ $this->load->view('header', $data);
         <div class="card-body register-card-body">
             <p class="register-box-msg">Register a new membership</p>
 
-            <?php if ($this->session->flashdata('error')): ?>
-                <div class="alert alert-danger">
-                    <?= $this->session->flashdata('error'); ?>
-                </div>
-            <?php endif; ?>
+            <!-- AJAX Message Box -->
+            <div id="ajaxMessage"></div>
 
-            <?php if ($this->session->flashdata('success')): ?>
-                <div class="alert alert-success">
-                    <?= $this->session->flashdata('success'); ?>
-                </div>
-            <?php endif; ?>
+            <?= form_open('register/submit', ['id' => 'registerForm']); ?>
 
-            <?= form_open('register/submit'); ?>
-
-            <!-- FULL NAME FIELD ADDED -->
             <div class="input-group mb-3">
                 <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
                 <div class="input-group-text"><span class="bi bi-person-fill"></span></div>
@@ -55,7 +44,9 @@ $this->load->view('header', $data);
                 </div>
 
                 <div class="col-4">
-                    <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    <button type="submit" id="btnSubmit" class="btn btn-primary btn-block">
+                        Register
+                    </button>
                 </div>
             </div>
 
@@ -78,4 +69,50 @@ $this->load->view('header', $data);
     </div>
 </div>
 
-<?php $this->load->view('footer'); ?> <!-- FOOTER INCLUDE -->
+<?php $this->load->view('footer'); ?>
+
+<!-- jQuery - Required for AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$("#registerForm").submit(function(e){
+    e.preventDefault(); // stop reload
+
+    $("#btnSubmit").prop("disabled", true).text("Please wait...");
+
+    $.ajax({
+        url: "<?= site_url('register/submit'); ?>",
+        type: "POST",
+        data: $(this).serialize(),
+        dataType: "json",
+        success: function(response){
+
+            if(response.status === false){
+                // Validation or Email Exists Error
+                $("#ajaxMessage").html(
+                    `<div class="alert alert-danger">${response.message}</div>`
+                );
+                $("#btnSubmit").prop("disabled", false).text("Register");
+            } 
+            else {
+                // Success
+                $("#ajaxMessage").html(
+                    `<div class="alert alert-success">${response.message}</div>`
+                );
+
+                // Redirect to login (NO reload of register page)
+                setTimeout(() => {
+                    window.location.href = "<?= site_url('login'); ?>";
+                }, );
+            }
+        },
+
+        error: function(){
+            $("#ajaxMessage").html(
+                `<div class="alert alert-danger">Something went wrong! Try again.</div>`
+            );
+            $("#btnSubmit").prop("disabled", false).text("Register");
+        }
+    });
+});
+</script>

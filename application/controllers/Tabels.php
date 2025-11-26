@@ -23,7 +23,7 @@ class Tabels extends CI_Controller
         $this->load->model('User_model');
         $this->load->library('pagination');
            // Enable CodeIgniter profiler
-    $this->output->enable_profiler(TRUE);
+    
     }
 
     /**
@@ -38,19 +38,39 @@ class Tabels extends CI_Controller
         $config['use_page_numbers'] = TRUE;
 
         // Pagination styling
-        $config['full_tag_open']   = '<nav><ul class="pagination justify-content-center">';
-        $config['full_tag_close']  = '</ul></nav>';
-        $config['num_tag_open']    = '<li class="page-item">';
-        $config['num_tag_close']   = '</li>';
-        $config['cur_tag_open']    = '<li class="page-item active"><a class="page-link">';
-        $config['cur_tag_close']   = '</a></li>';
-        $config['next_tag_open']   = '<li class="page-item">';
-        $config['next_tag_close']  = '</li>';
-        $config['prev_tag_open']   = '<li class="page-item">';
-        $config['prev_tag_close']  = '</li>';
-        $config['attributes']      = ['class' => 'page-link'];
+        $config['full_tag_open'] = '<nav><ul class="pagination justify-content-center">';
+$config['full_tag_close'] = '</ul></nav>';
 
-        $this->pagination->initialize($config);
+$config['num_tag_open'] = '<li class="page-item mx-1">';   // spacing added
+$config['num_tag_close'] = '</li>';
+
+$config['cur_tag_open'] = '<li class="page-item active mx-1"><span class="page-link">';
+$config['cur_tag_close'] = '</span></li>';
+
+$config['attributes'] = ['class' => 'page-link'];
+
+
+// Previous Button
+$config['prev_link'] = '&laquo;';  // «
+$config['prev_tag_open'] = '<li class="page-item mx-1">';
+$config['prev_tag_close'] = '</li>';
+
+// Next Button
+$config['next_link'] = '&raquo;';  // »
+$config['next_tag_open'] = '<li class="page-item mx-1">';
+$config['next_tag_close'] = '</li>';
+
+// First Button
+$config['first_link'] = 'First';
+$config['first_tag_open'] = '<li class="page-item mx-1">';
+$config['first_tag_close'] = '</li>';
+
+// Last Button
+$config['last_link'] = 'Last';
+$config['last_tag_open'] = '<li class="page-item mx-1">';
+$config['last_tag_close'] = '</li>';
+
+$this->pagination->initialize($config);
 
         // Safe page number
         $page = $this->uri->segment(3);
@@ -85,25 +105,55 @@ class Tabels extends CI_Controller
     /**
      * Update user
      */
-    public function update($id)
+public function update($id)
     {
+        // Set up form validation rules (Recommended for robust AJAX)
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|max_length[100]');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|max_length[100]');
+        $this->form_validation->set_rules('status', 'Status', 'required|integer');
+        $this->form_validation->set_rules('role', 'Role', 'required|in_list[customer,admin,manager]');
+        
+        // Set the response header to JSON
+        $this->output->set_content_type('application/json');
+
+        if ($this->form_validation->run() == FALSE)
+        {
+            // Validation failed: Send errors back as JSON
+            $response = array(
+                'status' => 'error',
+                'message' => 'Validation failed.',
+                'validation_errors' => validation_errors() // Send validation errors
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        // Validation succeeded: Proceed with update logic
         $first_name = $this->input->post('first_name', TRUE);
-        $last_name  = $this->input->post('last_name', TRUE);
-        $status     = $this->input->post('status', TRUE);
-        $role       = $this->input->post('role', TRUE);
+        $last_name = $this->input->post('last_name', TRUE);
+        $status  = $this->input->post('status', TRUE);
+        $role  = $this->input->post('role', TRUE);
 
         $full_name = trim($first_name . ' ' . $last_name);
 
+        // Assuming User_model->updateUser returns TRUE on success, FALSE otherwise
         $updated = $this->User_model->updateUser( $id, $first_name,$last_name,$full_name,$status,$role);
           
-       
         if ($updated) {
-            $this->session->set_flashdata('success', 'User updated successfully!');
+            $response = array(
+                'status' => 'success',
+                'message' => 'User updated successfully!'
+            );
         } else {
-            $this->session->set_flashdata('error', 'Failed to update user!');
+            $response = array(
+                'status' => 'error',
+                'message' => 'Failed to update user. Please try again.'
+            );
         }
 
-        redirect('tabels');
+        // Send JSON response
+        echo json_encode($response);
     }
 
     /**

@@ -53,7 +53,7 @@ $this->load->view('header', $data);
                                     ?>
 
                                     <tr>
-                                        <td><?= html_escape($u->id); ?></td>
+                                        <td><?= html_escape("VV-" . str_pad($u->id, 4, "0", STR_PAD_LEFT)); ?></td>
                                         <td><?= html_escape($u->first_name); ?></td>
                                         <td><?= html_escape($u->last_name); ?></td>
                                         <td><?= html_escape($u->first_name . ' ' . $u->last_name); ?></td>

@@ -17,59 +17,46 @@ class Register extends CI_Controller
         $this->load->helper(['form', 'url']);
     }
 
-    /* ----------------------------------------
-        REGISTER PAGE
-    ---------------------------------------- */
+    // REGISTER PAGE
     public function index()
     {
         $this->load->view('register');
     }
 
-    /* ----------------------------------------
-        SUBMIT REGISTRATION
-    ---------------------------------------- */
-    public function submit()
-    {
-        $this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');
-        $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
+    // SUBMIT REGISTRATION
 
-        if ($this->form_validation->run() === FALSE) {
-            $this->session->set_flashdata('error', validation_errors());
-            return redirect('register');
-        }
-
-        $full_name = $this->input->post('full_name', TRUE);
-        $email     = $this->input->post('email', TRUE);
-        $password  = $this->input->post('password', TRUE);
-
-        $result = $this->User_model->registerUser($full_name, $email, $password);
-
-        $this->session->set_flashdata(
-            $result['status'] ? 'success' : 'error',
-            $result['message']
-        );
-
-        return redirect($result['status'] ? 'login' : 'register');
-    }
-
-    /* ----------------------------------------
-        SHOW ALL USERS
-    ---------------------------------------- */
-    public function users()
-    {
-        $data['users'] = $this->User_model->getContacts();
-        $this->load->view('users', $data);
-    }
-
-public function logout()
+public function submit()
 {
-    // destroy session
-    $this->session->sess_destroy();
+    $this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');
+    $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');
+    $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
 
-    // redirect to login or register page
-    return redirect('register');  // or 'login'
+    if ($this->form_validation->run() === FALSE) {
+        echo json_encode([
+            'status' => false,
+            'message' => validation_errors()
+        ]);
+        return;
+    }
+
+    $full_name = $this->input->post('full_name', TRUE);
+    $email     = $this->input->post('email', TRUE);
+    $password  = $this->input->post('password', TRUE);
+
+    $result = $this->User_model->registerUser($full_name, $email, $password);
+
+    echo json_encode($result); 
 }
 
 
+    // LOGOUT/SIGNOUT
+
+    public function logout()
+    {
+        // destroy session
+        $this->session->sess_destroy();
+
+        // redirect to login or register page
+        return redirect('register');  // or 'login'
+    }
 }

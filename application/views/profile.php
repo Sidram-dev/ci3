@@ -43,9 +43,9 @@
                         </div>
 
                         <div class="card-body">
+                            <div id="responseMsg"></div>
 
-                            <form method="post" action="<?= site_url('New_admin/update_profile'); ?>" enctype="multipart/form-data">
-
+                            <form id="profileForm" enctype="multipart/form-data">
 
                                 <!-- CSRF Token -->
                                 <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>"
@@ -119,11 +119,11 @@
                                         <th>Profile Image</th>
                                         <td>
                                             <input type="file" name="profile_image" class="form-control" accept="image/*">
-                                           
+                                            <small class="text-danger">
+                                                Allowed formats: gif, jpg, png, jpeg, webp
+                                            </small>
                                         </td>
                                     </tr>
-
-
 
                                 </table>
 
@@ -147,6 +147,50 @@
         <?php $this->load->view('navigation/footer'); ?>
 
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            $("#profileForm").on("submit", function(e) {
+                e.preventDefault(); // Stop normal form submit
+
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: "<?= site_url('New_admin/update_profile'); ?>",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    dataType: "json",
+
+                    beforeSend: function() {
+                        $("#responseMsg").html('<div class="alert alert-info">Updating...</div>');
+                    },
+
+                    success: function(res) {
+                        if (res.status === true) {
+                            $("#responseMsg").html('<div class="alert alert-success">' + res.msg + '</div>');
+
+                            // Optional: reload profile image without full page reload
+                            setTimeout(() => {
+                                $("#responseMsg").fadeOut();
+                            }, 3000);
+
+                        } else {
+                            $("#responseMsg").html('<div class="alert alert-danger">' + res.msg + '</div>');
+                        }
+                    },
+
+                    error: function() {
+                        $("#responseMsg").html('<div class="alert alert-danger">Something went wrong!</div>');
+                    }
+                });
+            });
+
+        });
+    </script>
 
 </body>
 <?php $this->load->view('footer'); ?>

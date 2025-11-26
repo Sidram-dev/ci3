@@ -34,12 +34,9 @@ class User_model extends CI_Model
         ];
     }
 
-    // Get all users
-    public function getContacts()
-    {
-        $query = $this->db->get('users');
-        return $query->num_rows() ? $query->result() : false;
-    }
+
+ 
+  
 
     // Get single user by id
     public function getUserById($id)
@@ -92,9 +89,6 @@ public function getUsersLimit($limit, $offset)
     return $query->result();
 }
 
-
-
-
     /* ------------------------------
         GET USER BY EMAIL
     ------------------------------ */
@@ -102,7 +96,6 @@ public function getUsersLimit($limit, $offset)
     {
         return $this->db->where('email', $email)->get('users')->row();
     }
-
 
 
 // Save reset token
@@ -136,6 +129,12 @@ public function updatePasswordByEmail($email, $password)
     ];
 
     return $this->db->where('email', $email)->update('users', $data);
+}
+
+public function update_user($id, $data)
+{
+    $this->db->where('id', $id);
+    return $this->db->update('users', $data);
 }
 
 

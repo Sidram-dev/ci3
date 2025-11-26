@@ -100,8 +100,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 <a href="?lang=english">English</a> |
 <a href="?lang=french">Français</a> |
-<a href="?lang=german">german</a>
-
-
+<a href="?lang=german">german</a>	|
+<a href="?lang=kannada">kannada</a>
 </body>
 </html>

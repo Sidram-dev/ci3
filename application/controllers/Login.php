@@ -25,42 +25,45 @@ class Login extends CI_Controller
 
 public function submit()
 {
-    // Load form validation
-    $this->load->library('form_validation');
-
     // Validation rules
     $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');
     $this->form_validation->set_rules('password', 'Password', 'required|trim');
 
-    // Run validation
     if ($this->form_validation->run() === FALSE) {
-        $this->session->set_flashdata('error', validation_errors());
-        return redirect('login');
+        echo json_encode([
+            'status' => false,
+            'message' => validation_errors()
+        ]);
+        return;
     }
 
-    // Get safe XSS-cleaned input
     $email    = $this->input->post('email', TRUE);
     $password = $this->input->post('password', TRUE);
 
-    // Call model
     $result = $this->User_model->loginUser($email, $password);
 
     if ($result['status']) {
 
-        // Set session data
+        // Set session
         $this->session->set_userdata([
             'user_id'   => $result['user']->id,
             'email'     => $result['user']->email,
             'logged_in' => true
         ]);
 
-        return redirect('dashboard');
+        echo json_encode([
+            'status' => true,
+            'message' => "Login successful!"
+        ]);
 
     } else {
-        $this->session->set_flashdata('error', $result['message']);
-        return redirect('login');
+        echo json_encode([
+            'status' => false,
+            'message' => $result['message']
+        ]);
     }
 }
+
 
     public function logout()
     {
