@@ -12,13 +12,6 @@
     <!-- MAIN CONTENT -->
     <main class="app-main">
 
-        <!-- PAGE HEADING -->
-        <div class="app-content-header">
-            <div class="container-fluid">
-                <!-- <h3 class="mb-0">Create New Admin</h3> -->
-            </div>
-        </div>
-
         <div class="app-content">
             <div class="container-fluid">
 
@@ -33,15 +26,18 @@
 
                             <div class="card-body p-4">
 
-                                <?php if ($this->session->flashdata('error')): ?>
-                                    <div class="alert alert-danger"><?= $this->session->flashdata('error'); ?></div>
-                                <?php endif; ?>
+                                <!-- area for AJAX messages -->
+                                <div id="ajaxMessage"></div>
 
-                                <?php if ($this->session->flashdata('success')): ?>
-                                    <div class="alert alert-success"><?= $this->session->flashdata('success'); ?></div>
-                                <?php endif; ?>
+                                <!-- Use form_open('', ...) so action is current controller route.
+                                     This page will still work without JS (progressive enhancement). -->
+                                <?= form_open('new_admin/save', ['id' => 'newAdminForm']); ?>
 
-                                <?= form_open('new_admin/save'); ?>
+                                <!-- CSRF token -->
+                                <input type="hidden"
+                                       name="<?= $this->security->get_csrf_token_name(); ?>"
+                                       value="<?= $this->security->get_csrf_hash(); ?>"
+                                       id="csrf_token">
 
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Full Name</label>
@@ -79,12 +75,13 @@
                                     <a href="<?= site_url('tabels'); ?>" class="btn btn-light border px-4 py-2">
                                         <i class="bi bi-arrow-left"></i> Back
                                     </a>
-                                    <button class="btn btn-success px-5 py-2 fw-bold">
+                                    <button type="submit" id="submitBtn" class="btn btn-success px-5 py-2 fw-bold">
                                         <i class="bi bi-save"></i> Create Admin
                                     </button>
                                 </div>
 
-                                </form>
+                                <?= form_close(); ?>
+
                             </div>
                         </div>
 
@@ -95,7 +92,73 @@
         </div>
 
     </main>
- <?php $this->load->view('navigation/footer'); ?>
+
+    <?php $this->load->view('navigation/footer'); ?>
 </div>
 
 <?php $this->load->view('footer'); ?>
+
+<!-- Ensure jQuery is present. If your footer already loads jQuery, this won't hurt. -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(function() {
+    // attach submit handler - uses progressive enhancement: form action still works without JS
+    $('#newAdminForm').on('submit', function(e) {
+        e.preventDefault(); // prevent default only when JS enabled
+
+        $('#ajaxMessage').html('');
+        $('#submitBtn').prop('disabled', true).text('Saving...');
+
+        // serialize form (includes CSRF hidden field)
+        var data = $(this).serialize();
+
+        // debug: uncomment to see serialized data in console
+        // console.log('Submitting:', data);
+
+        $.ajax({
+            url: "<?= site_url('new_admin/save'); ?>",
+            method: "POST",
+            data: data,
+            dataType: "json",
+            timeout: 15000,
+
+            success: function(resp) {
+                // expected JSON: { status: 'success'|'error', message: '...', csrf_token_name: '...', csrf_hash: '...' }
+                if (!resp) {
+                    $('#ajaxMessage').html('<div class="alert alert-danger">Invalid server response.</div>');
+                    $('#submitBtn').prop('disabled', false).html('<i class="bi bi-save"></i> Create Admin');
+                    return;
+                }
+
+                // update CSRF token if provided
+                if (resp.csrf_token_name && resp.csrf_hash) {
+                    $('#csrf_token').val(resp.csrf_hash);
+                }
+
+                if (resp.status === 'success') {
+                    $('#ajaxMessage').html('<div class="alert alert-success">' + resp.message + '</div>');
+                    // redirect after 600ms
+                    setTimeout(function() {
+                        window.location.href = "<?= site_url('dashboard'); ?>";
+                    }, 600);
+                } else {
+                    var msg = resp.message || 'Failed to save.';
+                    $('#ajaxMessage').html('<div class="alert alert-danger">' + msg + '</div>');
+                    $('#submitBtn').prop('disabled', false).html('<i class="bi bi-save"></i> Create Admin');
+                }
+            },
+
+            error: function(xhr, status, error) {
+                var serverText = xhr.responseText || '';
+                $('#ajaxMessage').html('<div class="alert alert-danger">AJAX error: ' + status + ' ' + error + '<br><small>' + $('<div>').text(serverText).html() + '</small></div>');
+                $('#submitBtn').prop('disabled', false).html('<i class="bi bi-save"></i> Create Admin');
+                console.error('AJAX error', status, error, xhr);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

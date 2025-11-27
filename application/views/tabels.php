@@ -9,18 +9,32 @@ $this->load->view('header', $data);
 
     <!-- HEADER -->
     <?php $this->load->view('navigation/headernav', $data); ?>
+    
     <!-- SIDEBAR -->
     <?php $this->load->view('navigation/sidebar', $data); ?>
 
     <!-- MAIN CONTENT -->
     <main class="app-main">
 
+        <!-- PAGE HEADER & FILTER -->
         <div class="app-content-header">
-            <div class="container-fluid">
+            <div class="container-fluid d-flex justify-content-between align-items-center">
                 <h3 class="mb-0">Simple Tables</h3>
+
+                <!-- FILTER DROPDOWN -->
+                <form method="get" class="d-flex align-items-center">
+                    <label for="role_filter" class="me-2 mb-0">List View:</label>
+                    <select name="role" id="role_filter" class="form-select me-2" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <option value="admin" <?= (isset($role_filter) && $role_filter === 'admin') ? 'selected' : '' ?>>Admin</option>
+                        <option value="manager" <?= (isset($role_filter) && $role_filter === 'manager') ? 'selected' : '' ?>>Manager</option>
+                        <option value="customer" <?= (isset($role_filter) && $role_filter === 'customer') ? 'selected' : '' ?>>Customer</option>
+                    </select>
+                </form>
             </div>
         </div>
 
+        <!-- TABLE CONTENT -->
         <div class="app-content">
             <div class="container-fluid">
 
@@ -47,7 +61,7 @@ $this->load->view('header', $data);
                                 <?php foreach ($users as $u): ?>
 
                                     <?php
-                                        $logged    = $logged_user;            // logged in user
+                                        $logged    = $logged_user;
                                         $isOwner   = ($logged->id == $u->id);
                                         $role      = strtolower($logged->role);
                                     ?>
@@ -145,6 +159,7 @@ $this->load->view('header', $data);
                             </tbody>
                         </table>
 
+                        <!-- PAGINATION -->
                         <div class="mt-3">
                             <?= $pagination ?? ''; ?>
                         </div>
@@ -157,6 +172,7 @@ $this->load->view('header', $data);
 
     </main>
 
+    <!-- FOOTER -->
     <?php $this->load->view('navigation/footer'); ?>
 
 </div>

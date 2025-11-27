@@ -83,11 +83,16 @@ public function deleteUser($id)
 
 
 
-public function getUsersLimit($limit, $offset)
+public function getUsersLimit($limit, $offset, $role = null)
 {
-    $query = $this->db->limit($limit, $offset)->get('users');
-    return $query->result();
+    $this->db->from('users');
+    if (!empty($role)) {
+        $this->db->where('role', $role);
+    }
+    $this->db->limit($limit, $offset);
+    return $this->db->get()->result();
 }
+
 
     /* ------------------------------
         GET USER BY EMAIL

@@ -30,7 +30,6 @@ public function submit()
     $this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');
     $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim');
     $this->form_validation->set_rules('password', 'Password', 'required|min_length[5]');
-
     if ($this->form_validation->run() === FALSE) {
         echo json_encode([
             'status' => false,

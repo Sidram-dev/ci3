@@ -29,64 +29,67 @@ class Tabels extends CI_Controller
     /**
      * Index - Display all users with pagination
      */
-    public function index()
-    {
-        // Pagination config
-        $config['base_url']        = site_url('tabels/index');
-        $config['total_rows']      = $this->db->count_all('users');
-        $config['per_page']        = 10;
-        $config['use_page_numbers'] = TRUE;
+public function index()
+{
+    $per_page = 50;
 
-        // Pagination styling
-        $config['full_tag_open'] = '<nav><ul class="pagination justify-content-center">';
-$config['full_tag_close'] = '</ul></nav>';
+    // Get role filter from GET
+    $role = $this->input->get('role');
 
-$config['num_tag_open'] = '<li class="page-item mx-1">';   // spacing added
-$config['num_tag_close'] = '</li>';
-
-$config['cur_tag_open'] = '<li class="page-item active mx-1"><span class="page-link">';
-$config['cur_tag_close'] = '</span></li>';
-
-$config['attributes'] = ['class' => 'page-link'];
-
-
-// Previous Button
-$config['prev_link'] = '&laquo;';  // «
-$config['prev_tag_open'] = '<li class="page-item mx-1">';
-$config['prev_tag_close'] = '</li>';
-
-// Next Button
-$config['next_link'] = '&raquo;';  // »
-$config['next_tag_open'] = '<li class="page-item mx-1">';
-$config['next_tag_close'] = '</li>';
-
-// First Button
-$config['first_link'] = 'First';
-$config['first_tag_open'] = '<li class="page-item mx-1">';
-$config['first_tag_close'] = '</li>';
-
-// Last Button
-$config['last_link'] = 'Last';
-$config['last_tag_open'] = '<li class="page-item mx-1">';
-$config['last_tag_close'] = '</li>';
-
-$this->pagination->initialize($config);
-
-        // Safe page number
-        $page = $this->uri->segment(3);
-        $page = ($page && ctype_digit((string)$page)) ? (int)$page : 1;
-        $offset = ($page - 1) * $config['per_page'];
-
-        // Load users
-        $data['users'] = $this->User_model->getUsersLimit($config['per_page'], $offset);
-        $data['pagination'] = $this->pagination->create_links();
-
-        // Logged in user
-        $user_id = $this->session->userdata('user_id');
-        $data['logged_user'] = $this->User_model->getUserById($user_id);
-
-        $this->load->view('tabels', $data);
+    // Count total users with optional role filter
+    $this->db->from('users');
+    if (!empty($role)) {
+        $this->db->where('role', $role);
     }
+    $total_rows = $this->db->count_all_results();
+
+    // Pagination config
+    $config['base_url'] = site_url('tabels/index');
+    $config['total_rows'] = $total_rows;
+    $config['per_page'] = $per_page;
+    $config['use_page_numbers'] = TRUE;
+
+    // Pagination styling
+    $config['full_tag_open'] = '<nav><ul class="pagination justify-content-center">';
+    $config['full_tag_close'] = '</ul></nav>';
+    $config['num_tag_open'] = '<li class="page-item mx-1">';
+    $config['num_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="page-item active mx-1"><span class="page-link">';
+    $config['cur_tag_close'] = '</span></li>';
+    $config['attributes'] = ['class' => 'page-link'];
+    $config['prev_link'] = '&laquo;';
+    $config['prev_tag_open'] = '<li class="page-item mx-1">';
+    $config['prev_tag_close'] = '</li>';
+    $config['next_link'] = '&raquo;';
+    $config['next_tag_open'] = '<li class="page-item mx-1">';
+    $config['next_tag_close'] = '</li>';
+    $config['first_link'] = 'First';
+    $config['first_tag_open'] = '<li class="page-item mx-1">';
+    $config['first_tag_close'] = '</li>';
+    $config['last_link'] = 'Last';
+    $config['last_tag_open'] = '<li class="page-item mx-1">';
+    $config['last_tag_close'] = '</li>';
+
+    $this->pagination->initialize($config);
+
+    // Current page
+    $page = $this->uri->segment(3);
+    $page = ($page && ctype_digit((string)$page)) ? (int)$page : 1;
+    $offset = ($page - 1) * $per_page;
+
+    // Fetch users with limit and role filter
+    $data['users'] = $this->User_model->getUsersLimit($per_page, $offset, $role);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['role_filter'] = $role;
+
+    // Logged-in user
+    $user_id = $this->session->userdata('user_id');
+    $data['logged_user'] = $this->User_model->getUserById($user_id);
+
+    $this->load->view('tabels', $data);
+}
+
+
 
     /**
      * Edit user form
