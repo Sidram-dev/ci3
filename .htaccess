@@ -1,9 +1,8 @@
 <IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /ci3/
+   RewriteEngine On
+RewriteBase /ci3/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
 
-    # Redirect all requests to index.php if the file/folder doesn't exist
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php/$1 [L]
 </IfModule>
