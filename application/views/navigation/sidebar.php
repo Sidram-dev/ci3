@@ -79,12 +79,12 @@
              </ul>
            </li>
            <li class="nav-item">
-             <a href="../docs/faq.html" class="nav-link">
-               <i class="nav-icon bi bi-question-circle-fill"></i>
-               <p>FAQ</p>
+             <a href="<?= site_url('add_products'); ?>" class="nav-link">
+               <i class="bi bi-plus-circle me-2"></i> 
+               <p>Add Product</p>
              </a>
            </li>
-
+          
          </ul>
          <!--end::Sidebar Menu-->
        </nav>

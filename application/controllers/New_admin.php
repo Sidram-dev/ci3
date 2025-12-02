@@ -59,20 +59,6 @@ public function update_profile()
         return;
     }
 
-    // ----------- VALIDATION RULES ----------
-    $this->form_validation->set_rules('first_name', 'First Name', 'required');
-    $this->form_validation->set_rules('last_name', 'Last Name', 'required');
-    $this->form_validation->set_rules('country_code', 'Country Code', 'required');
-    $this->form_validation->set_rules('phone', 'Phone', 'required');
-
-    if ($this->form_validation->run() === FALSE) {
-        echo json_encode([
-            'status' => false,
-            'msg'    => validation_errors()
-        ]);
-        return;
-    }
-
     $id = $this->session->userdata('user_id');
 
     // ----------- DATA TO UPDATE ----------
@@ -88,9 +74,11 @@ public function update_profile()
     // ---------- IMAGE UPLOAD ----------
     if (!empty($_FILES['profile_image']['name'])) {
 
-        $config['upload_path'] = './assets/upload/';
-        $config['allowed_types'] = 'gif|jpg|png|jpeg|webp';
-        $config['max_size'] = 2048;
+        $config = [
+            'upload_path'   => './assets/upload/',
+            'allowed_types' => 'gif|jpg|png|jpeg|webp',
+            'max_size'      => 2048,
+        ];
 
         $this->load->library('upload', $config);
 
@@ -105,7 +93,6 @@ public function update_profile()
             return;
         }
     }
-
     // ---------- UPDATE USER ----------
     $this->db->where('id', $id)->update('users', $data);
 
@@ -115,94 +102,49 @@ public function update_profile()
     ]);
 }
 
-
-
     // Save New Admin
 public function save()
 {
-    // Load form validation if not already loaded
-    $this->load->library('form_validation');
-
-    // Set validation rules
-    $this->form_validation->set_rules('full_name', 'Full Name', 'trim|required');
-    $this->form_validation->set_rules('first_name', 'First Name', 'trim|required');
-    $this->form_validation->set_rules('last_name', 'Last Name', 'trim|required');
-    $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email|is_unique[users.email]');
-    $this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]');
-
     header('Content-Type: application/json');
 
-    // If validation fails, return errors
-    if ($this->form_validation->run() === FALSE) {
-        $errors = validation_errors('<div>','</div>');
-        $response = [
-            'status' => 'error',
-            'message' => $errors ?: 'Validation failed.',
-        ];
-
-        // include fresh CSRF token if available
-        if (method_exists($this->security, 'get_csrf_token_name')) {
-            $response['csrf_token_name'] = $this->security->get_csrf_token_name();
-            $response['csrf_hash'] = $this->security->get_csrf_hash();
-        }
-
-        echo json_encode($response);
-        return;
-    }
-
-    // Prepare data (XSS filtered via second param true)
+    // Prepare data
     $data = [
-        'full_name'  => $this->input->post('full_name', true),
-        'first_name' => $this->input->post('first_name', true),
-        'last_name'  => $this->input->post('last_name', true),
-        'email'      => $this->input->post('email', true),
-        'password'   => password_hash($this->input->post('password', true), PASSWORD_DEFAULT),
+        'full_name'  => $this->input->post('full_name'),
+        'first_name' => $this->input->post('first_name'),
+        'last_name'  => $this->input->post('last_name'),
+        'email'      => $this->input->post('email'),
+        'password'   => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
         'role'       => 'admin',
         'status'     => 1,
         'created_at' => date("Y-m-d H:i:s")
     ];
 
-    // Insert and handle DB errors
+    // Insert user
     if ($this->db->insert('users', $data)) {
-        $insert_id = $this->db->insert_id();
 
-        // Auto-login the new admin
+        // Auto login after registration
+        $insert_id = $this->db->insert_id();
         $this->session->set_userdata([
             'user_id' => $insert_id,
             'email'   => $data['email'],
             'role'    => 'admin'
         ]);
 
-        $response = [
-            'status' => 'success',
+        echo json_encode([
+            'status'  => 'success',
             'message' => 'Admin created successfully.'
-        ];
-
-        if (method_exists($this->security, 'get_csrf_token_name')) {
-            $response['csrf_token_name'] = $this->security->get_csrf_token_name();
-            $response['csrf_hash'] = $this->security->get_csrf_hash();
-        }
-
-        echo json_encode($response);
-        return;
-    } else {
-        // log DB error
-        $db_error = $this->db->error();
-        log_message('error', 'Insert user failed: ' . print_r($db_error, true) . ' -- Query: ' . $this->db->last_query());
-
-        $response = [
-            'status' => 'error',
-            'message' => 'Database error: ' . ($db_error['message'] ?? 'unknown')
-        ];
-
-        if (method_exists($this->security, 'get_csrf_token_name')) {
-            $response['csrf_token_name'] = $this->security->get_csrf_token_name();
-            $response['csrf_hash'] = $this->security->get_csrf_hash();
-        }
-
-        echo json_encode($response);
+        ]);
         return;
     }
+
+    // DB error response
+    $db_error = $this->db->error();
+
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'Database error: ' . ($db_error['message'] ?? 'Unknown error')
+    ]);
 }
+
 
 }

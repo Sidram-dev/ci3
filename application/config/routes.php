@@ -66,5 +66,9 @@ $route['reset_passward'] = 'reset_passward';
 $route['dashboard_v1'] = 'dashboard_v1';
 $route['api_user'] = 'Apiusers/index';
 $route['api_user/(:num)'] = 'Apiusers/index/$1';
+$route['add_products'] = 'ProductController/add_product';
+
+$route['manage_product'] = 'ProductController/manage_product';
+$route['edit_product/(:num)'] = 'ProductController/edit_product/$1';
 
 
