@@ -46,16 +46,17 @@ class ProductController extends CI_Controller {
 
 public function save_product()
 {
+    $response = ['status' => 'error', 'message' => 'Something went wrong'];
+
     $image = '';
 
     if (!empty($_FILES['image']['name'])) {
 
         $config['upload_path']   = './assets/upload/';
-        $config['allowed_types'] = '*'; // allow all file types
-        $config['max_size']      = 5120; // 5MB
-        $config['encrypt_name']  = FALSE; // keep original name
+        $config['allowed_types'] = '*';
+        $config['max_size']      = 5120;
+        $config['encrypt_name']  = FALSE;
 
-        // Handle filename conflict
         $original_name = $_FILES['image']['name'];
         $target_path = $config['upload_path'] . $original_name;
         if (file_exists($target_path)) {
@@ -70,8 +71,8 @@ public function save_product()
             $uploadData = $this->upload->data();
             $image = $uploadData['file_name'];
         } else {
-            $this->session->set_flashdata('error', $this->upload->display_errors());
-            redirect('ProductController/add_product');
+            $response['message'] = $this->upload->display_errors();
+            echo json_encode($response);
             return;
         }
     }
@@ -86,9 +87,14 @@ public function save_product()
         'image'         => $image
     ];
 
-    $this->ProductModel->insert_product($data);
-    $this->session->set_flashdata('success', 'Product added successfully!');
-    redirect('ProductController/manage_product');
+    if($this->ProductModel->insert_product($data)) {
+        $response['status'] = 'success';
+        $response['message'] = 'Product added successfully!';
+    } else {
+        $response['message'] = 'Failed to save product';
+    }
+
+    echo json_encode($response);
 }
 
 
@@ -109,15 +115,17 @@ public function save_product()
 
  public function update_product($id)
 {
+    $response = ['status' => 'error', 'message' => 'Something went wrong'];
+
     $old_image = $this->input->post('old_image');
     $image = $old_image;
 
     if (!empty($_FILES['image']['name'])) {
 
         $config['upload_path']   = './assets/upload/';
-        $config['allowed_types'] = '*'; // allow all file types
-        $config['max_size']      = 5120; // 5MB
-        $config['encrypt_name']  = FALSE; // keep original name
+        $config['allowed_types'] = '*';
+        $config['max_size']      = 5120;
+        $config['encrypt_name']  = FALSE;
 
         // Handle filename conflict
         $original_name = $_FILES['image']['name'];
@@ -134,13 +142,13 @@ public function save_product()
             $uploadData = $this->upload->data();
             $image = $uploadData['file_name'];
 
-            // Delete old image if exists
+            // Delete old image
             if (!empty($old_image) && file_exists('./assets/upload/' . $old_image)) {
                 unlink('./assets/upload/' . $old_image);
             }
         } else {
-            $this->session->set_flashdata('error', $this->upload->display_errors());
-            redirect('ProductController/edit_product/' . $id);
+            $response['message'] = $this->upload->display_errors();
+            echo json_encode($response);
             return;
         }
     }
@@ -155,10 +163,16 @@ public function save_product()
         'image'         => $image
     ];
 
-    $this->ProductModel->update_product($id, $data);
-    $this->session->set_flashdata('success', 'Product updated successfully!');
-    redirect('ProductController/manage_product');
+    if ($this->ProductModel->update_product($id, $data)) {
+        $response['status'] = 'success';
+        $response['message'] = 'Product updated successfully!';
+    } else {
+        $response['message'] = 'Failed to update product';
+    }
+
+    echo json_encode($response);
 }
+
 
 
 public function delete_product($id)

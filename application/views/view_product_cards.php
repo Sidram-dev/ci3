@@ -72,6 +72,8 @@
 
 </div>
 
+
+
 <style>
     /* CARD STYLING */
     .product-card {
