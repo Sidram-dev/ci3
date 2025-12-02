@@ -14,6 +14,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Db $db
  * @property CI_Uri $uri
  * @property CI_Output $output
+ * @property CI_Security $security
  */
 class Tabels extends CI_Controller
 {
@@ -193,6 +194,68 @@ public function update($id)
 
         $this->load->view('details', $data);
     }
+
+public function filter_column()
+{
+    $field = $this->input->post('field');
+    $operator = $this->input->post('operator');
+    $value = $this->input->post('value');
+
+    if (!$field || !$operator || $value === '') {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Invalid filter values',
+            'newToken' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+
+    if ($operator === 'contains') {
+        $this->db->like($field, $value);
+    } else {
+        $this->db->where("$field $operator", $value);
+    }
+
+    $users = $this->db->get('users')->result();
+
+    if (!$users) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'No matching records found',
+            'newToken' => $this->security->get_csrf_hash()
+        ]);
+        return;
+    }
+
+    $html = "";
+    foreach ($users as $u) {
+        $html .= "
+        <tr>
+            <td>VV-" . str_pad($u->id, 4, '0', STR_PAD_LEFT) . "</td>
+            <td>{$u->first_name}</td>
+            <td>{$u->last_name}</td>
+            <td>{$u->full_name}</td>
+            <td>{$u->email}</td>
+            <td>{$u->country_code}</td>
+            <td>{$u->phone}</td>
+            <td>" . ucfirst($u->role) . "</td>
+            <td>" . ($u->status == 1 ? '<span class=\"badge bg-success\">Active</span>' : '<span class=\"badge bg-danger\">Inactive</span>') . "</td>
+            <td>" . date('d-m-Y H:i', strtotime($u->created_at)) . "</td>
+            <td>
+                <a href='".site_url('tabels/view/'.$u->id)."' class='btn btn-sm btn-info'><i class='bi bi-eye'></i></a>
+                <a href='".site_url('tabels/edit/'.$u->id)."' class='btn btn-sm btn-primary'>Edit</a>
+                <a href='".site_url('tabels/delete/'.$u->id)."' class='btn btn-sm btn-danger' onclick='return confirm(\"Are you sure?\")'>Delete</a>
+            </td>
+        </tr>";
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'html' => $html,
+        'newToken' => $this->security->get_csrf_hash()
+    ]);
+}
+
 
 
 }

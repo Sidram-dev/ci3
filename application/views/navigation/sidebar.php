@@ -66,7 +66,7 @@
                <li class="nav-item">
                  <a href="<?= site_url('tabels'); ?>" class="nav-link active">
                    <i class="nav-icon bi bi-circle"></i>
-                   <p>Admin Tables</p>
+                   <p>Users Tables</p>
                  </a>
                </li>
                <li class="nav-item">

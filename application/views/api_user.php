@@ -69,6 +69,8 @@ $this->load->view('header', $data);
                                     <?php endif; ?>
                                 </tbody>
                             </table>
+                            <div id="ajaxPagination"></div>
+
                             <!-- PAGINATION -->
                             <div class="mt-3">
                                 <?= $pagination ?? ''; ?>
@@ -82,4 +84,5 @@ $this->load->view('header', $data);
         <?php $this->load->view('navigation/footer'); ?>
     </div>
     <?php $this->load->view('footer', $data); ?>
+    
 </body>

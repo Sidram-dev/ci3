@@ -21,14 +21,12 @@ class ProductController extends CI_Controller {
     {
         parent::__construct();
         $this->load->model('ProductModel');
-          $this->load->model('User_model'); // ⭐ Added for dropdown functionality
+          $this->load->model('User_model'); 
         $this->load->helper(['url','form']);
         $this->load->library('upload');
     
     }
-    
-
-    
+        
     // COMMON FUNCTION TO PASS LOGGED USER TO ALL VIEWS
     private function load_view($page, $data = [])
     {
@@ -40,7 +38,7 @@ class ProductController extends CI_Controller {
 
   public function add_product()
 {
-    $this->load_view('add_products');   // <-- this sends logged_user automatically
+    $this->load_view('add_products');   
 }
 
 
@@ -97,8 +95,6 @@ public function save_product()
     echo json_encode($response);
 }
 
-
-
     public function manage_product()
     {
         $data['products'] = $this->ProductModel->get_all_products();
@@ -127,7 +123,7 @@ public function save_product()
         $config['max_size']      = 5120;
         $config['encrypt_name']  = FALSE;
 
-        // Handle filename conflict
+        
         $original_name = $_FILES['image']['name'];
         $target_path = $config['upload_path'] . $original_name;
         if (file_exists($target_path)) {
@@ -142,7 +138,7 @@ public function save_product()
             $uploadData = $this->upload->data();
             $image = $uploadData['file_name'];
 
-            // Delete old image
+           
             if (!empty($old_image) && file_exists('./assets/upload/' . $old_image)) {
                 unlink('./assets/upload/' . $old_image);
             }
@@ -173,22 +169,15 @@ public function save_product()
     echo json_encode($response);
 }
 
-
-
 public function delete_product($id)
 {
-    // Get old image
     $product = $this->ProductModel->get_product($id);
 
-    // Delete image from folder
     if (!empty($product->image) && file_exists('./assets/upload/' . $product->image)) {
         unlink('./assets/upload/' . $product->image);
     }
-
-    // Delete record from database
     $this->ProductModel->delete_product($id);
 
-    // Redirect back
     redirect('ProductController/manage_product');
 }
 
@@ -204,7 +193,7 @@ public function view_products()
 public function product_details($id)
 {
     $data['product'] = $this->ProductModel->get_product_by_id($id);
-    $this->load_view('product_details', $data);   // auto passes logged_user
+    $this->load_view('product_details', $data);  
 }
 
 

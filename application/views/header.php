@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta name="csrf-token-name" content="<?= $this->security->get_csrf_token_name(); ?>">
+<meta name="csrf-token-hash" content="<?= $this->security->get_csrf_hash(); ?>">
+
     <meta charset="utf-8" />
     <title><?= htmlspecialchars($title ?? "AdminLTE 4"); ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
