@@ -47,6 +47,7 @@ td .iti {
 
                 <?= validation_errors('<div class="alert alert-danger">', '</div>'); ?>
 
+                
                 <!-- CARD -->
                 <div class="card shadow-lg w-75 mx-auto mt-4 border-0">
 

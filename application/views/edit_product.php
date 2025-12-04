@@ -45,11 +45,11 @@
                                    value="<?= $product->name; ?>" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="fw-semibold">Description</label>
-                            <textarea name="description" class="form-control shadow-sm"
-                                      rows="3"><?= $product->description; ?></textarea>
-                        </div>
+                       <div class="mb-3">
+    <label class="fw-semibold">Description</label>
+    <textarea id="descriptionEditor" name="description" class="form-control shadow-sm" rows="3"><?= $product->description; ?></textarea>
+</div>
+
 
                         <div class="mb-3">
                             <label class="fw-semibold">Category</label>
@@ -159,6 +159,16 @@ $(document).ready(function() {
     });
 
 });
+</script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+ClassicEditor
+    .create(document.querySelector('#descriptionEditor'))
+    
+    .catch(error => {
+        console.error(error);
+    });
+    
 </script>
 
 </body>

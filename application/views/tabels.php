@@ -47,6 +47,14 @@ th {
     justify-content: space-between;
     gap: 4%;
 }
+
+.col-resize-handle {
+    width: 5px;
+    height: 100%;
+    background: transparent;
+    cursor: col-resize;
+}
+
 </style>
 
 <?php
@@ -83,7 +91,8 @@ $this->load->view('header', $data);
                 <div class="card">
                     <div class="card-body table-responsive p-0">
 
-                        <table class="table table-bordered table-striped text-nowrap">
+                        <table id="resizableTable" class="table table-bordered table-striped text-nowrap">
+
                             <thead class="table-dark">
                                 <tr>
                                     <?php
@@ -109,7 +118,7 @@ $this->load->view('header', $data);
                                                 <span class="filter-triangle">&#9662;</span>
                                                 <div class="column-filter-dropdown">
                                                     <label>Field:</label>
-                                                    <select class="filter-field">
+                                                    <select class="filter-field" disabled>
                                                         <option value="<?= $field ?>" selected><?= $label ?></option>
                                                     </select>
 
@@ -200,6 +209,12 @@ $this->load->view('header', $data);
 </div>
 
 <?php $this->load->view('footer', $data); ?>
+<!-- jQuery UI for dragging/resizing -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<!-- ColResizable (Lightweight Excel-like column resize) -->
+<script src="https://cdn.jsdelivr.net/npm/colresizable/colResizable-1.6.min.js"></script>
+
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
@@ -268,4 +283,40 @@ $('.apply-filter').click(function(e){
         $dropdown.hide();
     });
 });
+
+
+
+$(document).ready(function(){
+
+    /* -----------------------------
+       EXCEL-LIKE COLUMN RESIZING
+       ----------------------------- */
+  $("#resizableTable").colResizable({
+        liveDrag: true,
+        resizeMode: 'flex', 
+        headerOnly: true,
+        gripInnerHtml: "<div class='col-resize-handle'></div>",
+        hoverCursor: "col-resize",
+        dragCursor: "col-resize",
+        minWidth: 50
+    });
+
+    /* -----------------------------
+       DRAGGABLE COLUMN HEADERS
+       ----------------------------- */
+    $("table thead tr").sortable({
+        items: "th:not(:last-child)", // prevent action column from dragging
+        cursor: "move",
+        axis: "x",
+        update: function(event, ui) {
+            let newOrder = [];
+            $("table thead th").each(function(index){
+                newOrder.push($(this).index());
+            });
+            console.log("Column Order Updated:", newOrder);
+        }
+    });
+
+});
+
 </script>

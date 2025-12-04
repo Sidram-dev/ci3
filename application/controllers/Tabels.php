@@ -32,7 +32,7 @@ class Tabels extends CI_Controller
      */
 public function index()
 {
-    $per_page = 50;
+    $per_page = 10;
 
     // Get role filter from GET
     $role = $this->input->get('role');
@@ -45,50 +45,58 @@ public function index()
     $total_rows = $this->db->count_all_results();
 
     // Pagination config
-    $config['base_url'] = site_url('tabels/index');
-    $config['total_rows'] = $total_rows;
-    $config['per_page'] = $per_page;
+    $config['base_url']        = site_url('tabels/index');
+    $config['total_rows']      = $total_rows;
+    $config['per_page']        = $per_page;
     $config['use_page_numbers'] = TRUE;
 
-    // Pagination styling
-    $config['full_tag_open'] = '<nav><ul class="pagination justify-content-center">';
-    $config['full_tag_close'] = '</ul></nav>';
-    $config['num_tag_open'] = '<li class="page-item mx-1">';
-    $config['num_tag_close'] = '</li>';
-    $config['cur_tag_open'] = '<li class="page-item active mx-1"><span class="page-link">';
-    $config['cur_tag_close'] = '</span></li>';
-    $config['attributes'] = ['class' => 'page-link'];
-    $config['prev_link'] = '&laquo;';
-    $config['prev_tag_open'] = '<li class="page-item mx-1">';
-    $config['prev_tag_close'] = '</li>';
-    $config['next_link'] = '&raquo;';
-    $config['next_tag_open'] = '<li class="page-item mx-1">';
-    $config['next_tag_close'] = '</li>';
-    $config['first_link'] = 'First';
-    $config['first_tag_open'] = '<li class="page-item mx-1">';
-    $config['first_tag_close'] = '</li>';
-    $config['last_link'] = 'Last';
-    $config['last_tag_open'] = '<li class="page-item mx-1">';
-    $config['last_tag_close'] = '</li>';
+    
+// Pagination styling with spacing between numbers
+$config['full_tag_open']   = '<nav><ul class="pagination justify-content-center">';
+$config['full_tag_close']  = '</ul></nav>';
+
+$config['num_tag_open']    = '<li class="page-item mx-1">'; // spacing added
+$config['num_tag_close']   = '</li>';
+
+$config['cur_tag_open']    = '<li class="page-item active mx-1"><a class="page-link">'; // spacing added
+$config['cur_tag_close']   = '</a></li>';
+
+$config['next_tag_open']   = '<li class="page-item mx-1">'; // spacing added
+$config['next_tag_close']  = '</li>';
+
+$config['prev_tag_open']   = '<li class="page-item mx-1">'; // spacing added
+$config['prev_tag_close']  = '</li>';
+
+$config['first_tag_open']  = '<li class="page-item mx-1">'; // spacing added
+$config['first_tag_close'] = '</li>';
+
+$config['last_tag_open']   = '<li class="page-item mx-1">'; // spacing added
+$config['last_tag_close']  = '</li>';
+
+$config['attributes']      = ['class' => 'page-link'];
+
 
     $this->pagination->initialize($config);
 
-    // Current page
+    // Safe page number
     $page = $this->uri->segment(3);
     $page = ($page && ctype_digit((string)$page)) ? (int)$page : 1;
     $offset = ($page - 1) * $per_page;
 
     // Fetch users with limit and role filter
     $data['users'] = $this->User_model->getUsersLimit($per_page, $offset, $role);
+
     $data['pagination'] = $this->pagination->create_links();
     $data['role_filter'] = $role;
 
-    // Logged-in user
+    // Logged in user
     $user_id = $this->session->userdata('user_id');
     $data['logged_user'] = $this->User_model->getUserById($user_id);
 
     $this->load->view('tabels', $data);
 }
+
+
 
 
 
@@ -199,7 +207,7 @@ public function filter_column()
 {
     $field = $this->input->post('field');
     $operator = $this->input->post('operator');
-    $value = $this->input->post('value');
+    $value = trim($this->input->post('value'));
 
     if (!$field || !$operator || $value === '') {
         echo json_encode([
@@ -210,6 +218,23 @@ public function filter_column()
         return;
     }
 
+    // Special Case: STATUS FIX
+    if ($field === 'status') {
+        if (strtolower($value) === 'active') {
+            $value = 1;
+        } elseif (strtolower($value) === 'inactive') {
+            $value = 0;
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Status must be Active or Inactive',
+                'newToken' => $this->security->get_csrf_hash()
+            ]);
+            return;
+        }
+    }
+
+    // Apply filter
     if ($operator === 'contains') {
         $this->db->like($field, $value);
     } else {

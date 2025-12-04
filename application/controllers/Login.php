@@ -63,8 +63,6 @@ public function submit()
         ]);
     }
 }
-
-
     public function logout()
     {
         $this->session->sess_destroy();

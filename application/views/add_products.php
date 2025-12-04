@@ -42,7 +42,7 @@
 
                         <div class="mb-3">
                             <label>Description</label>
-                            <textarea name="description" class="form-control shadow-sm"><?= set_value('description'); ?></textarea>
+                    <textarea name="description" id="descriptionEditor"><?= set_value('description'); ?></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -135,6 +135,16 @@ $(document).ready(function() {
     });
 
 });
+</script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+ClassicEditor
+    .create(document.querySelector('#descriptionEditor'))
+    
+    .catch(error => {
+        console.error(error);
+    });
+    
 </script>
 
 </body>
