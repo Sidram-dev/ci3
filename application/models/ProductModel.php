@@ -43,33 +43,39 @@ class ProductModel extends CI_Model {
         ->result();
 }
 
-// Fetch distinct categories
-public function get_all_categories(){
-    $this->db->select('category');
-    $this->db->distinct();
-    return $this->db->get('products')->result();
-}
 
-public function get_subcategories_by_category($cat_name){
-    $this->db->select('sub_category');
-    $this->db->distinct();
-    $this->db->where('category', $cat_name);
-    return $this->db->get('products')->result();
-}
 
-// Filter products by category or subcategory
-public function get_products_by_filter($value = null){
-    $this->db->from('products');
+// Get all categories with their subcategories (for dropdown)
+    public function get_categories_with_subcategories()
+    {
+        $this->db->select('category, sub_category');
+        $this->db->from('products');
+        $query = $this->db->get()->result();
 
-    if($value){
-        $this->db->group_start();
-        $this->db->where('category', $value);
-        $this->db->or_where('sub_category', $value);
-        $this->db->group_end();
+        $categories = [];
+        foreach ($query as $row) {
+            $categories[$row->category][] = $row->sub_category;
+        }
+
+        // Remove duplicate subcategories for each category
+        foreach ($categories as $cat => $subs) {
+            $categories[$cat] = array_unique($subs);
+        }
+
+        return $categories;
     }
 
-    return $this->db->get()->result();
+    // Fetch products by main category
+public function get_products_by_category($category)
+{
+    return $this->db->get_where('products', ['category' => $category])->result();
 }
+
+    // Get products by subcategory
+    public function get_products_by_subcategory($subcat)
+    {
+        return $this->db->get_where('products', ['sub_category' => $subcat])->result();
+    }
 
 
 

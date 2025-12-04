@@ -20,6 +20,8 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/css/index.css'); ?>">
 
+    <link rel="stylesheet" href="<?= base_url('assets/css/custom.css'); ?>">
+
     <!-- Page-specific safe CSS for login centering -->
     <style>
     /* only applies when body has class 'login-page' */

@@ -1,6 +1,7 @@
 <script src="<?= base_url('assets/js/overlayscrollbars.browser.es6.min.js'); ?>"></script>
 <script src="<?= base_url('assets/js/popper.min.js'); ?>"></script>
 <script src="<?= base_url('assets/js/bootstrap.min.js'); ?>"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="<?= base_url('assets/js/adminlte.min.js'); ?>"></script>
 
 <script>

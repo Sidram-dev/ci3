@@ -24,6 +24,7 @@ class ProductController extends CI_Controller {
           $this->load->model('User_model'); 
         $this->load->helper(['url','form']);
         $this->load->library('upload');
+        
 
           // IMPORTANT — Load Pagination Library
     $this->load->library('pagination');
@@ -236,29 +237,27 @@ public function delete_product($id)
 // View products with category & subcategory dropdown
 public function view_products()
 {
-    // Fetch distinct categories
-    $categories = $this->ProductModel->get_all_categories();
+    $selected_category   = $this->input->get('category');    // selected main category
+    $selected_subcat     = $this->input->get('subcat');      // selected subcategory
 
-    $data['category_options'] = [];
-    foreach($categories as $cat){
-        $subcategories = $this->ProductModel->get_subcategories_by_category($cat->category);
-        // convert to array of strings
-        $sub_list = [];
-        foreach($subcategories as $sub){
-            $sub_list[] = $sub->sub_category;
-        }
+    // Fetch categories with their subcategories
+    $data['categories'] = $this->ProductModel->get_categories_with_subcategories();
+    $data['selected_category'] = $selected_category;
+    $data['selected_subcat'] = $selected_subcat;
 
-        $data['category_options'][] = [
-            'category' => $cat->category,
-            'subcategories' => $sub_list
-        ];
+    // Fetch products based on subcategory or category
+    if ($selected_subcat) {
+        $data['products'] = $this->ProductModel->get_products_by_subcategory($selected_subcat);
+    } elseif ($selected_category) {
+        // If only category is selected, show all products in that category
+        $data['products'] = $this->ProductModel->get_products_by_category($selected_category);
+    } else {
+        $data['products'] = $this->ProductModel->get_all_products();
     }
-
-    // Fetch all products **once**
-    $data['products'] = $this->ProductModel->get_all_products();
 
     $this->load_view('view_product_cards', $data);
 }
+
 
 
 
@@ -270,25 +269,6 @@ public function product_details($id)
 }
 
 
-
-public function get_subcategories()
-{
-    $category_name = $this->input->post('category_name'); // frontend sends category name
-    $subcategories = $this->ProductModel->get_subcategories_by_category($category_name);
-
-    if(!empty($subcategories)){
-        echo json_encode(['status'=>'success','subcategories'=>$subcategories]);
-    } else {
-        echo json_encode(['status'=>'error','subcategories'=>[]]);
-    }
-}
-
-public function filter_products()
-{
-    $value = $this->input->post('value'); // selected category or subcategory
-    $products = $this->ProductModel->get_products_by_filter($value);
-    echo json_encode($products);
-}
 
 
 
