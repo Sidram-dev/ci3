@@ -35,6 +35,12 @@ class ProductModel extends CI_Model {
         return $this->db->get_where('products', ['id' => $id])->row();
     }
 
+    public function count_all_products()
+{
+    return $this->db->count_all('products');  // use your table name
+}
+
+
     public function get_products_limit($limit, $offset)
 {
     return $this->db
@@ -78,6 +84,32 @@ public function get_products_by_category($category)
     }
 
 
+    // Count products with filter
+public function count_filtered_products($category, $subcat)
+{
+    if ($subcat) {
+        $this->db->where('sub_category', $subcat);
+    } elseif ($category) {
+        $this->db->where('category', $category);
+    }
+
+    return $this->db->count_all_results('products');
+}
+
+// Fetch filtered products with pagination
+public function get_filtered_products($category, $subcat, $limit, $offset)
+{
+    if ($subcat) {
+        $this->db->where('sub_category', $subcat);
+    } elseif ($category) {
+        $this->db->where('category', $category);
+    }
+
+    return $this->db
+        ->limit($limit, $offset)
+        ->get('products')
+        ->result();
+}
 
 
     

@@ -24,10 +24,6 @@ class ProductController extends CI_Controller {
           $this->load->model('User_model'); 
         $this->load->helper(['url','form']);
         $this->load->library('upload');
-        
-
-          // IMPORTANT — Load Pagination Library
-    $this->load->library('pagination');
     
     }
         
@@ -100,58 +96,77 @@ public function save_product()
 
     echo json_encode($response);
 }
-  public function manage_product()
-    {
-        $per_page = 10;  // You can change product per page
-        
-        // COUNT TOTAL ROWS
-        $this->db->from('products');
-        $total_rows = $this->db->count_all_results();
+public function manage_product()
+{
+    $per_page = 10;
 
-        // Pagination config
-        $config['base_url']        = site_url('ProductController/manage_product');
-        $config['total_rows']      = $total_rows;
-        $config['per_page']        = $per_page;
-        $config['use_page_numbers'] = TRUE;
+    // Filters
+    $selected_category = $this->input->get('category');
+    $selected_subcat   = $this->input->get('subcat');
 
-        /* BOOTSTRAP STYLING */
-        $config['full_tag_open']   = '<nav><ul class="pagination justify-content-center">';
-        $config['full_tag_close']  = '</ul></nav>';
+    // Total rows
+    $total_rows = $this->ProductModel->count_filtered_products($selected_category, $selected_subcat);
 
-        $config['num_tag_open']    = '<li class="page-item mx-1">';
-        $config['num_tag_close']   = '</li>';
+    // SAFE PAGE (Never NULL)
+    $page = $this->input->get('page');
 
-        $config['cur_tag_open']    = '<li class="page-item active mx-1"><a class="page-link">';
-        $config['cur_tag_close']   = '</a></li>';
-
-        $config['next_tag_open']   = '<li class="page-item mx-1">';
-        $config['next_tag_close']  = '</li>';
-
-        $config['prev_tag_open']   = '<li class="page-item mx-1">';
-        $config['prev_tag_close']  = '</li>';
-
-        $config['first_tag_open']  = '<li class="page-item mx-1">';
-        $config['first_tag_close'] = '</li>';
-
-        $config['last_tag_open']   = '<li class="page-item mx-1">';
-        $config['last_tag_close']  = '</li>';
-
-        $config['attributes']      = ['class' => 'page-link'];
-
-        $this->pagination->initialize($config);
-
-        // SAFE PAGE NUMBER
-        $page = $this->uri->segment(3);
-        $page = ($page && ctype_digit((string)$page)) ? (int)$page : 1;
-        $offset = ($page - 1) * $per_page;
-
-        // FETCH PAGINATED PRODUCTS
-        $data['products'] = $this->ProductModel->get_products_limit($per_page, $offset);
-
-        $data['pagination'] = $this->pagination->create_links();
-
-        $this->load_view('manage_product', $data);
+    if ($page === null || $page === '' || !ctype_digit((string)$page) || $page < 1) {
+        $page = 1;
+    } else {
+        $page = (int)$page;
     }
+
+    $offset = ($page - 1) * $per_page;
+
+    // Fix query string build
+    $query_params = $_GET;
+    unset($query_params['page']);
+
+    $config['base_url'] = site_url('ProductController/manage_product') . '?' . http_build_query($query_params);
+
+    $config['total_rows'] = $total_rows;
+    $config['per_page'] = $per_page;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['use_page_numbers'] = TRUE;
+
+    // ⭐⭐⭐ THIS IS THE REAL FIX ⭐⭐⭐
+    // CI sometimes ignores cur_page, so we OVERRIDE the internal value
+    $_GET['page'] = $page;
+
+    $config['cur_page'] = $page;
+
+    // Bootstrap
+    $config['full_tag_open']   = '<nav><ul class="pagination justify-content-center">';
+    $config['full_tag_close']  = '</ul></nav>';
+    $config['num_tag_open']    = '<li class="page-item mx-1">';
+    $config['num_tag_close']   = '</li>';
+    $config['cur_tag_open']    = '<li class="page-item active mx-1"><a class="page-link">';
+    $config['cur_tag_close']   = '</a></li>';
+    $config['next_tag_open']   = '<li class="page-item mx-1">';
+    $config['next_tag_close']  = '</li>';
+    $config['prev_tag_open']   = '<li class="page-item mx-1">';
+    $config['prev_tag_close']  = '</li>';
+    $config['attributes']      = ['class' => 'page-link'];
+
+    $this->pagination->initialize($config);
+
+    // Data fetch
+    $data['products'] = $this->ProductModel->get_filtered_products(
+        $selected_category,
+        $selected_subcat,
+        $per_page,
+        $offset
+    );
+
+    $data['categories'] = $this->ProductModel->get_categories_with_subcategories();
+    $data['selected_category'] = $selected_category;
+    $data['selected_subcat'] = $selected_subcat;
+
+    $data['pagination'] = $this->pagination->create_links();
+
+    $this->load->view('manage_product', $data);
+}
 
     // edit prdoduct logic
     public function edit_product($id)
@@ -234,30 +249,73 @@ public function delete_product($id)
 }
 
 // view products in view_product_cards
-// View products with category & subcategory dropdown
 public function view_products()
 {
-    $selected_category   = $this->input->get('category');    // selected main category
-    $selected_subcat     = $this->input->get('subcat');      // selected subcategory
+    $selected_category = $this->input->get('category');
+    $selected_subcat   = $this->input->get('subcat');
 
-    // Fetch categories with their subcategories
+    $per_page = 9;
+
+    // Total rows based on filters
+    $total_rows = $this->ProductModel->count_filtered_products($selected_category, $selected_subcat);
+
+    // SAFE PAGE NUMBER
+    $page = $this->input->get('page');
+    if ($page === null || $page === '' || !ctype_digit((string)$page) || $page < 1) {
+        $page = 1;
+    } else {
+        $page = (int)$page;
+    }
+
+    $offset = ($page - 1) * $per_page;
+
+    // Build base_url with existing filters
+    $query_params = $_GET;
+    unset($query_params['page']); // Remove page to rebuild links
+    $config['base_url'] = site_url('ProductController/view_products') . '?' . http_build_query($query_params);
+
+    $config['total_rows'] = $total_rows;
+    $config['per_page'] = $per_page;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['use_page_numbers'] = TRUE;
+
+    // Bootstrap Pagination
+    $config['full_tag_open']   = '<nav><ul class="pagination justify-content-center">';
+    $config['full_tag_close']  = '</ul></nav>';
+    $config['num_tag_open']    = '<li class="page-item mx-1">';
+    $config['num_tag_close']   = '</li>';
+    $config['cur_tag_open']    = '<li class="page-item active mx-1"><a class="page-link">';
+    $config['cur_tag_close']   = '</a></li>';
+    $config['next_tag_open']   = '<li class="page-item mx-1">';
+    $config['next_tag_close']  = '</li>';
+    $config['prev_tag_open']   = '<li class="page-item mx-1">';
+    $config['prev_tag_close']  = '</li>';
+    $config['attributes']      = ['class' => 'page-link'];
+
+    // Initialize Pagination
+    $this->pagination->initialize($config);
+
+    // 🔥 FIX: force CI internal cur_page to our safe $page
+    $_GET['page'] = $page;
+    $config['cur_page'] = $page;
+
+    // Fetch filtered products
+    $data['products'] = $this->ProductModel->get_filtered_products(
+        $selected_category,
+        $selected_subcat,
+        $per_page,
+        $offset
+    );
+
     $data['categories'] = $this->ProductModel->get_categories_with_subcategories();
     $data['selected_category'] = $selected_category;
     $data['selected_subcat'] = $selected_subcat;
 
-    // Fetch products based on subcategory or category
-    if ($selected_subcat) {
-        $data['products'] = $this->ProductModel->get_products_by_subcategory($selected_subcat);
-    } elseif ($selected_category) {
-        // If only category is selected, show all products in that category
-        $data['products'] = $this->ProductModel->get_products_by_category($selected_category);
-    } else {
-        $data['products'] = $this->ProductModel->get_all_products();
-    }
+    $data['pagination'] = $this->pagination->create_links();
 
     $this->load_view('view_product_cards', $data);
 }
-
 
 
 

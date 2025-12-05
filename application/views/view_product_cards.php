@@ -21,34 +21,34 @@
                         <a href="<?= site_url('ProductController/add_product'); ?>" class="btn btn-primary">Add Product</a>
                     </div>
 
-<!-- FILTER DROPDOWN -->
-<div class="mb-4">
-    <form method="GET" action="<?= site_url('ProductController/view_products'); ?>">
-        <label class="fw-bold mb-2">Filter by Category / Subcategory</label>
+                    <!-- FILTER DROPDOWN -->
+                    <div class="mb-4">
+                        <form method="GET" action="<?= site_url('ProductController/view_products'); ?>">
+                            <label class="fw-bold mb-2">Filter by Category / Subcategory</label>
 
-        <!-- Main Category -->
-        <select name="category" class="form-select mb-2" style="max-width:400px;" onchange="this.form.submit()">
-            <option value="">-- Select Main Category --</option>
-            <?php foreach ($categories as $cat => $subcats): ?>
-                <option value="<?= $cat; ?>" <?= ($selected_category == $cat) ? 'selected' : ''; ?>>
-                    <?= $cat; ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+                            <!-- Main Category -->
+                            <select name="category" class="form-select mb-2" style="max-width:400px;" onchange="this.form.submit()">
+                                <option value="">-- Select Main Category --</option>
+                                <?php foreach ($categories as $cat => $subcats): ?>
+                                    <option value="<?= $cat; ?>" <?= ($selected_category == $cat) ? 'selected' : ''; ?>>
+                                        <?= $cat; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
 
-        <!-- Subcategory (shows only subcategories of selected main category) -->
-        <?php if ($selected_category): ?>
-            <select name="subcat" class="form-select" style="max-width:400px;" onchange="this.form.submit()">
-                <option value="">-- Select Subcategory --</option>
-                <?php foreach ($categories[$selected_category] as $sub): ?>
-                    <option value="<?= $sub; ?>" <?= ($selected_subcat == $sub) ? 'selected' : ''; ?>>
-                        <?= str_repeat('&nbsp;&nbsp;', 1) . $sub; ?> <!-- Indent subcategory -->
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        <?php endif; ?>
-    </form>
-</div>
+                            <!-- Subcategory (shows only subcategories of selected main category) -->
+                            <?php if ($selected_category): ?>
+                                <select name="subcat" class="form-select" style="max-width:400px;" onchange="this.form.submit()">
+                                    <option value="">-- Select Subcategory --</option>
+                                    <?php foreach ($categories[$selected_category] as $sub): ?>
+                                        <option value="<?= $sub; ?>" <?= ($selected_subcat == $sub) ? 'selected' : ''; ?>>
+                                            <?= str_repeat('&nbsp;&nbsp;', 1) . $sub; ?> <!-- Indent subcategory -->
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php endif; ?>
+                        </form>
+                    </div>
 
                     <!-- PRODUCT CARDS -->
                     <div class="row g-4 justify-content-center">
@@ -89,7 +89,10 @@
                             </div>
                         <?php endif; ?>
                     </div>
-
+                    <!-- PAGINATION -->
+                    <div class="mt-4">
+                        <?= $pagination; ?>
+                    </div>
                 </div>
 
             </div>
