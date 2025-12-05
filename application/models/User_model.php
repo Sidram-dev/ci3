@@ -34,10 +34,6 @@ class User_model extends CI_Model
         ];
     }
 
-
- 
-  
-
     // Get single user by id
     public function getUserById($id)
     {
@@ -63,25 +59,32 @@ class User_model extends CI_Model
         ];
     }
     // update
-public function updateUser($id, $first_name, $last_name, $full_name, $status,$role)
+public function updateUser($id, $first_name, $last_name, $full_name, $status, $role, $phone = null, $country_code = null)
 {
     $data = [
-           'first_name' => $first_name,
+        'first_name' => $first_name,
         'last_name'  => $last_name,
         'full_name'  => $full_name,
         'status'     => $status,
-        'role'       => $role // <- update role
+        'role'       => $role
     ];
+
+    if ($phone !== null) {
+        $data['phone'] = $phone;
+    }
+
+    if ($country_code !== null) {
+        $data['country_code'] = $country_code;
+    }
 
     return $this->db->where('id', $id)->update('users', $data);
 }
+// Delete user
 public function deleteUser($id)
 {
     $this->db->where('id', $id);
     return $this->db->delete('users'); // 'users' is your table name
 }
-
-
 
 public function getUsersLimit($limit, $offset, $role = null)
 {
@@ -141,6 +144,5 @@ public function update_user($id, $data)
     $this->db->where('id', $id);
     return $this->db->update('users', $data);
 }
-
 
 }

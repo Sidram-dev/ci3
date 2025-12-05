@@ -46,3 +46,61 @@
             height: 180px;
         }
     }
+
+
+
+/* Basic styling for dropdowns */
+th {
+    position: relative; /* relative for dropdown positioning */
+}
+
+.card-body.table-responsive {
+    overflow: visible !important; /* allow dropdown to overflow */
+    position: relative;
+}
+
+.column-filter-dropdown {
+    display: none;
+    position: absolute;
+    top: 25px;
+    left: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1050 !important;
+    min-width: 200px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.filter-triangle {
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 0.8rem;
+}
+
+.column-filter-dropdown label,
+.column-filter-dropdown select,
+.column-filter-dropdown input {
+    display: block;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
+.column-filter-dropdown button {
+    margin-top: 5px;
+    width: 48%;
+}
+
+.column-filter-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 4%;
+}
+
+.col-resize-handle {
+    width: 5px;
+    height: 100%;
+    background: transparent;
+    cursor: col-resize;
+}

@@ -37,7 +37,7 @@ class ProductModel extends CI_Model {
 
     public function count_all_products()
 {
-    return $this->db->count_all('products');  // use your table name
+    return $this->db->count_all('products');  
 }
 
 
@@ -49,9 +49,8 @@ class ProductModel extends CI_Model {
         ->result();
 }
 
+// Get all categories with their subcategories for dropdown
 
-
-// Get all categories with their subcategories (for dropdown)
     public function get_categories_with_subcategories()
     {
         $this->db->select('category, sub_category');

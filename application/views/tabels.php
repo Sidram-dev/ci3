@@ -1,61 +1,3 @@
-<style>
-/* Basic styling for dropdowns */
-th {
-    position: relative; /* relative for dropdown positioning */
-}
-
-.card-body.table-responsive {
-    overflow: visible !important; /* allow dropdown to overflow */
-    position: relative;
-}
-
-.column-filter-dropdown {
-    display: none;
-    position: absolute;
-    top: 25px;
-    left: 0;
-    background: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    z-index: 1050 !important;
-    min-width: 200px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    border-radius: 5px;
-}
-
-.filter-triangle {
-    cursor: pointer;
-    margin-left: 5px;
-    font-size: 0.8rem;
-}
-
-.column-filter-dropdown label,
-.column-filter-dropdown select,
-.column-filter-dropdown input {
-    display: block;
-    margin-bottom: 5px;
-    width: 100%;
-}
-
-.column-filter-dropdown button {
-    margin-top: 5px;
-    width: 48%;
-}
-
-.column-filter-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 4%;
-}
-
-.col-resize-handle {
-    width: 5px;
-    height: 100%;
-    background: transparent;
-    cursor: col-resize;
-}
-
-</style>
 
 <?php
 $data['title'] = "Simple Tables | AdminLTE";
@@ -282,41 +224,6 @@ $('.apply-filter').click(function(e){
         $dropdown.find('.filter-value').val('');
         $dropdown.hide();
     });
-});
-
-
-
-$(document).ready(function(){
-
-    /* -----------------------------
-       EXCEL-LIKE COLUMN RESIZING
-       ----------------------------- */
-  $("#resizableTable").colResizable({
-        liveDrag: true,
-        resizeMode: 'flex', 
-        headerOnly: true,
-        gripInnerHtml: "<div class='col-resize-handle'></div>",
-        hoverCursor: "col-resize",
-        dragCursor: "col-resize",
-        minWidth: 50
-    });
-
-    /* -----------------------------
-       DRAGGABLE COLUMN HEADERS
-       ----------------------------- */
-    $("table thead tr").sortable({
-        items: "th:not(:last-child)", // prevent action column from dragging
-        cursor: "move",
-        axis: "x",
-        update: function(event, ui) {
-            let newOrder = [];
-            $("table thead th").each(function(index){
-                newOrder.push($(this).index());
-            });
-            console.log("Column Order Updated:", newOrder);
-        }
-    });
-
 });
 
 </script>
