@@ -14,6 +14,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Db $db                      
  * @property CI_Uri $uri
  * @property CI_ProductModel $ProductModel
+ * @property CI_Output $output
+ * 
+ * @property CI_Category_model $Category_model
  */
 class ProductController extends CI_Controller
 {
@@ -22,6 +25,7 @@ class ProductController extends CI_Controller
     {
         parent::__construct();
         $this->load->model('ProductModel');
+        $this->load->model('Category_model');
         $this->load->model('User_model');
         $this->load->helper(['url', 'form']);
         $this->load->library('upload');
@@ -37,10 +41,15 @@ class ProductController extends CI_Controller
         $this->load->view($page, $data);
     }
 
-    public function add_product()
-    {
-        $this->load_view('add_products');
-    }
+  public function add_product()
+{
+    $this->load->model('Category_model');
+
+    $data['categories'] = $this->Category_model->get_all_categories();
+    $data['subcategories'] = $this->Category_model->get_all_sub_categories();
+
+    $this->load_view('add_products', $data);
+}
 
     // add product logic
 
@@ -308,4 +317,25 @@ class ProductController extends CI_Controller
         $data['product'] = $this->ProductModel->get_product_by_id($id);
         $this->load_view('product_details', $data);
     }
+
+
+    
+public function get_sub_categories_by_category()
+{
+    $category_id = $this->input->post('category_id');
+
+    if (!$category_id) {
+        echo json_encode([]);
+        return;
+    }
+
+    $this->load->model('Category_model');
+    $subcategories = $this->Category_model->get_sub_categories_by_category($category_id);
+
+    echo json_encode($subcategories); // simple array, no CSRF here
+}
+
+
+
+
 }

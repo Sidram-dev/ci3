@@ -70,5 +70,13 @@ $route['add_products'] = 'ProductController/add_product';
 
 $route['manage_product'] = 'ProductController/manage_product';
 $route['edit_product/(:num)'] = 'ProductController/edit_product/$1';
+$route['add_category'] = 'CategoryController/add_category';
+$route['stores'] = 'CategoryController/stores';
+$route['sub_categories'] = 'CategoryController/sub_categories';
+
+
+
+
+
 
 
