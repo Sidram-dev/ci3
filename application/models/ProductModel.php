@@ -109,7 +109,5 @@ public function get_filtered_products($category, $subcat, $limit, $offset)
         ->get('products')
         ->result();
 }
-
-
-    
+   
 }

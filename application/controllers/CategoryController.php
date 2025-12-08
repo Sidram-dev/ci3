@@ -59,4 +59,6 @@ public function store_sub_category()
     }
     redirect('sub_categories');
 }
+    
+
 }
