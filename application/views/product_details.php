@@ -36,8 +36,8 @@
                                 <h2 class="card-title fw-bold"><?= $product->name; ?></h2>
 
                                 <p class="text-muted mb-2">
-                                    <strong>Category:</strong> <?= $product->category; ?> 
-                                    / <?= $product->sub_category; ?>
+                                    <strong>Category:</strong> <?= $product->category_name; ?> / <?= $product->sub_category_name; ?>
+
                                 </p>
 
                                 <p class="text-success fw-bold fs-4 mb-3">

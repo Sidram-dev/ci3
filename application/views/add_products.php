@@ -47,9 +47,6 @@
                                 <textarea id="descriptionEditor" name="description"><?= set_value('description'); ?></textarea>
                             </div>
 
-                            <!-- Category -->
-
-
                             <!-- Category Dropdown -->
                             <div class="mb-3">
                                 <label for="category">Category</label>
@@ -62,8 +59,6 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-
-
 
                             <!-- Sub Category Dropdown -->
                             <div class="mb-3">
@@ -131,37 +126,37 @@
         $(document).ready(function() {
             // Load Subcategories based on selected Category
 
-          $('#category').on('change', function () {
-        let category_id = $(this).val();
+            $('#category').on('change', function() {
+                let category_id = $(this).val();
 
-        if(category_id === ''){
-            $('#sub_category').html('<option value="">-- Select Sub Category --</option>');
-            return;
-        }
-
-        $.ajax({
-            url: '<?= base_url("ProductController/get_subcategories"); ?>',
-            method: 'GET',
-            data: { category_id: category_id },
-            dataType: 'json',
-            success: function (data) {
-
-                $('#sub_category').html('<option value="">-- Select Sub Category --</option>');
-
-                if (data.length > 0) {
-                    $.each(data, function (i, row) {
-                        $('#sub_category').append(
-                            '<option value="'+row.sub_category_id+'">'+row.sub_category_name+'</option>'
-                        );
-                    });
-                } else {
-                    $('#sub_category').html('<option value="">No sub categories found</option>');
+                if (category_id === '') {
+                    $('#sub_category').html('<option value="">-- Select Sub Category --</option>');
+                    return;
                 }
-            }
-        });
-    });
 
+                $.ajax({
+                    url: '<?= base_url("ProductController/get_subcategories"); ?>',
+                    method: 'GET',
+                    data: {
+                        category_id: category_id
+                    },
+                    dataType: 'json',
+                    success: function(data) {
 
+                        $('#sub_category').html('<option value="">-- Select Sub Category --</option>');
+
+                        if (data.length > 0) {
+                            $.each(data, function(i, row) {
+                                $('#sub_category').append(
+                                    '<option value="' + row.sub_category_id + '">' + row.sub_category_name + '</option>'
+                                );
+                            });
+                        } else {
+                            $('#sub_category').html('<option value="">No sub categories found</option>');
+                        }
+                    }
+                });
+            });
 
             // AJAX Form Submit
             $('#productForm').on('submit', function(e) {

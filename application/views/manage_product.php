@@ -95,8 +95,8 @@
                                                         <?php endif; ?>
                                                     </td>
                                                     <td><?= $product->name; ?></td>
-                                                    <td><?= $product->category; ?></td>
-                                                    <td><?= $product->sub_category; ?></td>
+                                                    <td><?= $product->category_name ?></td>
+                                                    <td><?= $product->sub_category_name; ?></td>
                                                     <td><span class="badge bg-info"><?= $product->stock; ?></span></td>
                                                     <td><strong>₹<?= number_format($product->price, 2); ?></strong></td>
                                                     <td class="text-center">

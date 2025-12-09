@@ -27,22 +27,22 @@
                             <label class="fw-bold mb-2">Filter by Category / Subcategory</label>
 
                             <!-- Main Category -->
-                            <select name="category" class="form-select mb-2" style="max-width:400px;" onchange="this.form.submit()">
+                            <select name="category" class="form-select" onchange="this.form.submit()">
                                 <option value="">-- Select Main Category --</option>
-                                <?php foreach ($categories as $cat => $subcats): ?>
-                                    <option value="<?= $cat; ?>" <?= ($selected_category == $cat) ? 'selected' : ''; ?>>
-                                        <?= $cat; ?>
+                                <?php foreach ($categories as $catId => $catData): ?>
+                                    <option value="<?= $catId ?>" <?= ($selected_category == $catId) ? 'selected' : ''; ?>>
+                                        <?= $catData['name'] ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
 
                             <!-- Subcategory (shows only subcategories of selected main category) -->
-                            <?php if ($selected_category): ?>
-                                <select name="subcat" class="form-select" style="max-width:400px;" onchange="this.form.submit()">
+                            <?php if (!empty($selected_category) && isset($categories[$selected_category]['subs'])): ?>
+                                <select name="subcat" class="form-select" onchange="this.form.submit()">
                                     <option value="">-- Select Subcategory --</option>
-                                    <?php foreach ($categories[$selected_category] as $sub): ?>
-                                        <option value="<?= $sub; ?>" <?= ($selected_subcat == $sub) ? 'selected' : ''; ?>>
-                                            <?= str_repeat('&nbsp;&nbsp;', 1) . $sub; ?> <!-- Indent subcategory -->
+                                    <?php foreach ($categories[$selected_category]['subs'] as $subId => $subName): ?>
+                                        <option value="<?= $subId ?>" <?= ($selected_subcat == $subId) ? 'selected' : ''; ?>>
+                                            <?= $subName ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -71,7 +71,7 @@
 
                                             <div class="card-body d-flex flex-column">
                                                 <h5 class="card-title fw-bold"><?= $product->name; ?></h5>
-                                                <p class="card-text text-muted mb-1"><?= $product->category; ?> / <?= $product->sub_category; ?></p>
+                                                <p class="card-text text-muted mb-1"> <?= $product->category_name; ?> / <?= $product->sub_category_name; ?></p>
                                                 <p class="card-text text-success fw-bold mb-2">₹ <?= number_format($product->price, 2); ?></p>
                                                 <p class="card-text text-muted mb-3">Stock: <?= $product->stock; ?></p>
 

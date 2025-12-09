@@ -84,7 +84,8 @@ public function add_product()
 
         $data = [
             'name'          => $this->input->post('name'),
-            'description'   => $this->input->post('description'),
+         
+-            'description'   => $this->input->post('description'),
             'category'      => $this->input->post('category'),
             'sub_category'  => $this->input->post('sub_category'),
             'stock'         => $this->input->post('stock'),
@@ -164,11 +165,16 @@ public function add_product()
     }
 
     // edit prdoduct logic
-    public function edit_product($id)
-    {
-        $data['product'] = $this->ProductModel->get_product($id);
-        $this->load_view('edit_product', $data);
-    }
+  public function edit_product($id)
+{
+    $this->load->model('Category_model');
+
+    $data['product'] = $this->ProductModel->get_product($id);
+    $data['categories'] = $this->Category_model->get_all_categories();
+
+    $this->load_view('edit_product', $data);
+}
+
     // update prdoduct logic
     public function update_product($id)
     {
@@ -212,7 +218,7 @@ public function add_product()
 
         $data = [
             'name'          => $this->input->post('name'),
-            'description'   => $this->input->post('description'),
+            'description'   => strip_tags($this->input->post('description')),
             'category'      => $this->input->post('category'),
             'sub_category'  => $this->input->post('sub_category'),
             'stock'         => $this->input->post('stock'),
@@ -312,7 +318,6 @@ public function add_product()
         $data['product'] = $this->ProductModel->get_product_by_id($id);
         $this->load_view('product_details', $data);
     }
-
 
     public function get_subcategories()
 {
