@@ -1,10 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 /**
- * Tabels Controller
- *
  * Handles user listing, editing, updating, deleting, viewing details, and pagination.
- *
  * @property User_model $User_model
  * @property CI_Session $session
  * @property CI_Input $input
@@ -39,13 +36,13 @@ class ProductController extends CI_Controller
         $this->load->view($page, $data);
     }
 
-public function add_product()
-{
-    $this->load->model('Category_model');
-    $data['categories'] = $this->Category_model->get_all_categories();
+    public function add_product()
+    {
+        $this->load->model('Category_model');
+        $data['categories'] = $this->Category_model->get_all_categories();
 
-    $this->load_view('add_products', $data);
-}
+        $this->load_view('add_products', $data);
+    }
 
 
     // add product logic
@@ -84,8 +81,8 @@ public function add_product()
 
         $data = [
             'name'          => $this->input->post('name'),
-         
--            'description'   => $this->input->post('description'),
+
+            'description'   => $this->input->post('description'),
             'category'      => $this->input->post('category'),
             'sub_category'  => $this->input->post('sub_category'),
             'stock'         => $this->input->post('stock'),
@@ -165,15 +162,15 @@ public function add_product()
     }
 
     // edit prdoduct logic
-  public function edit_product($id)
-{
-    $this->load->model('Category_model');
+    public function edit_product($id)
+    {
+        $this->load->model('Category_model');
 
-    $data['product'] = $this->ProductModel->get_product($id);
-    $data['categories'] = $this->Category_model->get_all_categories();
+        $data['product'] = $this->ProductModel->get_product($id);
+        $data['categories'] = $this->Category_model->get_all_categories();
 
-    $this->load_view('edit_product', $data);
-}
+        $this->load_view('edit_product', $data);
+    }
 
     // update prdoduct logic
     public function update_product($id)
@@ -320,20 +317,18 @@ public function add_product()
     }
 
     public function get_subcategories()
-{
-    $this->load->model('Category_model');
+    {
+        $this->load->model('Category_model');
 
-    $category_id = $this->input->get('category_id');
+        $category_id = $this->input->get('category_id');
 
-    if (!$category_id) {
-        echo json_encode([]);
-        return;
+        if (!$category_id) {
+            echo json_encode([]);
+            return;
+        }
+
+        $subcategories = $this->Category_model->get_subcategories_by_category($category_id);
+
+        echo json_encode($subcategories);
     }
-
-    $subcategories = $this->Category_model->get_subcategories_by_category($category_id);
-
-    echo json_encode($subcategories);
-}
-
-
 }

@@ -6,12 +6,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Input $input
  * @property CI_DB_query_builder $db
  *  @property CI_Form_validation $form_validation
+ * @property CI_User_model $User_model
  */
 class CategoryController extends CI_Controller
 {
     public function add_category()
-    {
-        $this->load->view('add_category');
+    {   
+        $user_id = $this->session->userdata('user_id');
+        $this->load->model('User_model');
+        $data['logged_user'] = $this->User_model->getUserById($user_id);
+        $this->load->view('add_category',$data);
     }
 // storing the category
  
@@ -35,6 +39,10 @@ class CategoryController extends CI_Controller
 {
     $this->load->model('Category_model');
     $data['categories'] = $this->Category_model->get_all_categories();
+
+     $user_id = $this->session->userdata('user_id');
+        $this->load->model('User_model');
+        $data['logged_user'] = $this->User_model->getUserById($user_id);
 
     $this->load->view('add_sub_category', $data);
 }

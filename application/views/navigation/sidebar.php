@@ -66,13 +66,6 @@
                </li>
              </ul>
            </li>
-           <li class="nav-item">
-             <a href="<?= site_url('add_products'); ?>" class="nav-link">
-               <i class="bi bi-plus-circle me-2"></i> 
-               <p>Add Product</p>
-             </a>
-           </li>
-
            <li class="nav-item menu-open">
              <a href="#" class="nav-link active">
                <i class="nav-icon bi bi-speedometer"></i>
@@ -94,6 +87,13 @@
                    <p>Add Sub Categories</p>
                  </a>
                </li>
+
+                  <li class="nav-item">
+             <a href="<?= site_url('add_products'); ?>" class="nav-link">
+               <i class="bi bi-plus-circle me-2"></i> 
+               <p>Add Product</p>
+             </a>
+           </li>
               
                </li>
              </ul>

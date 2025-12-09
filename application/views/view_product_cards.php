@@ -1,3 +1,4 @@
+
 <?php $this->load->view('header'); ?>
 
 <body class="layout-fixed fixed-header fixed-footer sidebar-expand-lg bg-body-tertiary">
@@ -20,35 +21,41 @@
                         <h2 class="fw-bold">All Products</h2>
                         <a href="<?= site_url('ProductController/add_product'); ?>" class="btn btn-primary">Add Product</a>
                     </div>
+<!-- FILTER DROPDOWN -->
+<div class="mb-4">
+    <form method="GET" action="<?= site_url('ProductController/manage_product'); ?>" 
+          class="card shadow-sm p-3 border-0 rounded-4">
 
-                    <!-- FILTER DROPDOWN -->
-                    <div class="mb-4">
-                        <form method="GET" action="<?= site_url('ProductController/view_products'); ?>">
-                            <label class="fw-bold mb-2">Filter by Category / Subcategory</label>
+        <div class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Main Category</label>
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Select Main Category --</option>
+                    <?php foreach ($categories as $cat_id => $cat): ?>
+                        <option value="<?= $cat_id; ?>" <?= ($selected_category == $cat_id) ? 'selected' : '' ?>>
+                            <?= $cat['name']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-                            <!-- Main Category -->
-                            <select name="category" class="form-select" onchange="this.form.submit()">
-                                <option value="">-- Select Main Category --</option>
-                                <?php foreach ($categories as $catId => $catData): ?>
-                                    <option value="<?= $catId ?>" <?= ($selected_category == $catId) ? 'selected' : ''; ?>>
-                                        <?= $catData['name'] ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+            <?php if (!empty($selected_category) && isset($categories[$selected_category]['subs'])): ?>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Sub Category</label>
+                    <select name="subcat" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- Select Subcategory --</option>
+                        <?php foreach ($categories[$selected_category]['subs'] as $sub_id => $sub_name): ?>
+                            <option value="<?= $sub_id; ?>" <?= ($selected_subcat == $sub_id) ? 'selected' : '' ?>>
+                                <?= $sub_name; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
+        </div>
 
-                            <!-- Subcategory (shows only subcategories of selected main category) -->
-                            <?php if (!empty($selected_category) && isset($categories[$selected_category]['subs'])): ?>
-                                <select name="subcat" class="form-select" onchange="this.form.submit()">
-                                    <option value="">-- Select Subcategory --</option>
-                                    <?php foreach ($categories[$selected_category]['subs'] as $subId => $subName): ?>
-                                        <option value="<?= $subId ?>" <?= ($selected_subcat == $subId) ? 'selected' : ''; ?>>
-                                            <?= $subName ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            <?php endif; ?>
-                        </form>
-                    </div>
+    </form>
+</div>
 
                     <!-- PRODUCT CARDS -->
                     <div class="row g-4 justify-content-center">

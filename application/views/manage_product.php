@@ -40,10 +40,11 @@
                             <!-- Main Category -->
                             <select name="category" class="form-select mb-2" style="max-width:400px;" onchange="this.form.submit()">
                                 <option value="">-- Select Main Category --</option>
-                                <?php foreach ($categories as $cat => $subcats): ?>
-                                    <option value="<?= $cat; ?>" <?= isset($selected_category) && $selected_category == $cat ? 'selected' : ''; ?>>
-                                        <?= $cat; ?>
+                                <?php foreach ($categories as $cat_id => $cat): ?>
+                                    <option value="<?= $cat_id; ?>" <?= ($selected_category == $cat_id) ? 'selected' : '' ?>>
+                                        <?= $cat['name']; ?>
                                     </option>
+
                                 <?php endforeach; ?>
                             </select>
 
@@ -51,9 +52,9 @@
                             <?php if (isset($selected_category) && $selected_category): ?>
                                 <select name="subcat" class="form-select" style="max-width:400px;" onchange="this.form.submit()">
                                     <option value="">-- Select Subcategory --</option>
-                                    <?php foreach ($categories[$selected_category] as $sub): ?>
-                                        <option value="<?= $sub; ?>" <?= isset($selected_subcat) && $selected_subcat == $sub ? 'selected' : ''; ?>>
-                                            <?= str_repeat('&nbsp;&nbsp;', 1) . $sub; ?>
+                                    <?php foreach ($categories[$selected_category]['subs'] as $sub_id => $sub_name): ?>
+                                        <option value="<?= $sub_id; ?>" <?= ($selected_subcat == $sub_id) ? 'selected' : '' ?>>
+                                            <?= $sub_name; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
@@ -137,4 +138,5 @@
     </div>
 
 </body>
+
 </html>
